@@ -25,6 +25,19 @@
                 key: 'id_patient'
             }
         },
+        id_doctor: {
+            type: DataTypes.STRING(5),
+            allowNull: true,
+            references: {
+                model: 'doctors',
+                key: 'id_doctor'
+            }
+        },
+        id_admin: {
+            type: DataTypes.STRING(5),
+            allowNull: true,
+            
+        },
         username: {
             type: DataTypes.STRING(30),
             allowNull: false,

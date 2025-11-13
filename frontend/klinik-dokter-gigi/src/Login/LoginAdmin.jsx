@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function LoginAdmin() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -19,11 +19,11 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:3000/login", formData)
+    axios.post("http://localhost:3000/loginadmin", formData) // backend route for admin
       .then(res => {
         console.log("Response:", res.data);
         if(res.data.Status === "Success"){
-          navigate("/"); 
+          navigate("/admin-dashboard"); // redirect to admin dashboard
           alert("Login successful!");
         } else {
           alert("Login failed: " + (res.data.message || "Invalid credentials"));
@@ -38,7 +38,7 @@ function Login() {
   return (
     <div className="d-flex justify-content-center align-items-center bg-primary vh-100">
       <div className="bg-white p-4 rounded-3" style={{ width: "400px" }}>
-        <h2 className="text-center mb-4">Log In</h2>
+        <h2 className="text-center mb-4">Admin Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="username">
@@ -76,14 +76,20 @@ function Login() {
         </form>
 
         <p className="mt-3 text-center">
-          Have no account?{" "}
-          <a href="/register" className="text-decoration-none">
-            Register
+      
+          <a href="/logindoctor" className="text-decoration-none">
+            Switch to doctor
           </a>
+        </p>
+         <p className="mt-3 text-center">
+          <a href="/loginpatient" className="text-decoration-none">
+            Switch to patient
+          </a>
+         
         </p>
       </div>
     </div>
   )
 }
 
-export default Login;
+export default LoginAdmin;

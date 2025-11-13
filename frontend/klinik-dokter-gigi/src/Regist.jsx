@@ -42,7 +42,7 @@ function Regist() {
     .then(res => {
       if (res.data.Status === "Success") {
         alert("Registration successful!");
-        navigate("/login");
+        navigate("/loginpatient");
       } else {
         alert("Registration error");
       }
@@ -222,7 +222,7 @@ function Regist() {
 
         <p className="mt-3 text-center">
           Already have an account?{" "}
-          <a href="/login" className="text-decoration-none">
+          <a href="/loginpatient" className="text-decoration-none">
             Login
           </a>
         </p>

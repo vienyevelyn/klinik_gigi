@@ -7,6 +7,7 @@ const sequelize = require('./config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const patientRoutes = require("./routes/user_patient");
+const adminRoutes = require("./routes/user_admin");
 
 require('./models/associations');
 const port = process.env.PORT || 3000;
@@ -30,7 +31,7 @@ sequelize.authenticate()
 
 sequelize.sync();
 
-app.post("/login", async (req, res)=>{
+app.post("/loginpatient", async (req, res)=>{
   const {username, password} = req.body;
   if(!username || !password){
     return res.status(400).json({ message: "All fields are required" });
@@ -38,9 +39,11 @@ app.post("/login", async (req, res)=>{
   try{
     const data = await userController.findByUsername(username);
 
-    if(!data){
+    console.log(data);
+    if(!data || !data.id_patient){
       return res.status(404).json({ Status: "Fail", message: "User not found" });
     }
+
     const match = await bcrypt.compare(password, data.password);
     if (!match) {
       return res.status(401).json({ Status: "Fail", message: "Incorrect password" });
@@ -56,6 +59,68 @@ app.post("/login", async (req, res)=>{
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
+
+
+app.post("/logindoctor", async (req, res)=>{
+  const {username, password} = req.body;
+  if(!username || !password){
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  try{
+    const data = await userController.findByUsername(username);
+  console.log(data);
+
+    if(!data || !data.id_doctor){
+      return res.status(404).json({ Status: "Fail", message: "User not found" });
+    }
+
+    const match = await bcrypt.compare(password, data.password);
+    if (!match) {
+      return res.status(401).json({ Status: "Fail", message: "Incorrect password" });
+    }
+
+    const token = jwt.sign({username}, process.env.JWT_SECRET, {expiresIn: "1d"});
+    res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "lax" });
+    return res.json({ Status: "Success", message: "Login successful" });
+
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+
+app.post("/loginadmin", async (req, res)=>{
+  const {username, password} = req.body;
+  if(!username || !password){
+    return res.status(400).json({ message: "All fields are required" });
+  }
+  try{
+    const data = await userController.findByUsername(username);
+
+    if(!data || !data.id_admin){
+      return res.status(404).json({ Status: "Fail", message: "User not found" });
+    }
+
+    const match = await bcrypt.compare(password, data.password);
+    if (!match) {
+      return res.status(401).json({ Status: "Fail", message: "Incorrect password" });
+    }
+
+    const token = jwt.sign({username}, process.env.JWT_SECRET, {expiresIn: "1d"});
+    res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "lax" });
+    return res.json({ Status: "Success", message: "Login successful" });
+
+  }
+  catch(err){
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+
 
 const verifyUser = (req, res, next) =>{
   const token = req.cookies.token;
@@ -73,7 +138,7 @@ app.get("/", verifyUser, (req, res)=>{
 });
 
 app.post("/register", async (req, res)=>{
-  
+  console.log("Register request body:", req.body); 
   const { 
     username,
     email,
@@ -91,6 +156,7 @@ app.post("/register", async (req, res)=>{
   }
 
   try{
+    
     const newUser = await userController.createUserPatient({ username, email, phone, password });
 
     const newUserDetail = await userController.createUserDetail({id_user: newUser.id_user, NIK: nik, first_name, last_name, city_of_birth, date_of_birth, gender});
@@ -116,6 +182,7 @@ app.get("/logout", (req, res)=>{
 
 // patient
 app.use('/patient', patientRoutes);
+app.use('/admin', adminRoutes);
 
 
 app.listen(port, ()=>{
