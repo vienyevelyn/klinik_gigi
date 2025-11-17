@@ -1,30 +1,38 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/db'); 
+const sequelize = require('../config/db');
 
-const Doctor = sequelize.define('doctors', {
-    id_doctor: {
+const Appointment = sequelize.define('appointments', {
+    id_appointment: {
         type: DataTypes.STRING(5),
         primaryKey: true,
         allowNull: false,
     },
-    id_doctor_category: {
+    id_doctor_schedule: {
         type: DataTypes.STRING(5),
         allowNull: false,
     },
-    medical_license: {
+    id_patient: {
+        type: DataTypes.STRING(5),
+        allowNull: false,
+    },
+    appointment_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+    },
+    appointment_time: {
+        type: DataTypes.TIME,
+        allowNull: false,
+    },
+    appointment_type: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+    },
+    patient_note: {
         type: DataTypes.STRING(255),
         allowNull: false,
     },
-    certificate_degree: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-    },
-    specialization_certificate: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-    },
-    CV: {
-        type: DataTypes.STRING(255),
+    status: {
+        type: DataTypes.ENUM('scheduled', 'cancelled', 'doctor approval', 'completed'),
         allowNull: false,
     },
 
@@ -43,10 +51,10 @@ const Doctor = sequelize.define('doctors', {
         allowNull: true,
         defaultValue: null,
     },
-    }, 
-    {
-    tableName: 'doctors',
-    timestamps: false,   
+},
+{
+    tableName: 'appointments',
+    timestamps: false,
 });
 
-module.exports = Doctor;
+module.exports = Appointment;

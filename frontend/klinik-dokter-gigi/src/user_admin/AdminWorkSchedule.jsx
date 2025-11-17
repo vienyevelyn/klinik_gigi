@@ -43,6 +43,7 @@ export default function AdminWorkSchedule() {
         );
         setEditMode(false);
         setSelectedId(null);
+        
       } else {
         await axios.post("http://localhost:3000/admin/workschedule", formData);
       }
@@ -100,7 +101,7 @@ export default function AdminWorkSchedule() {
                 className="form-control"
                 placeholder="Example: WS001"
                 required
-                disabled={editMode}
+                disabled
               />
             </div>
 

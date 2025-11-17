@@ -44,7 +44,7 @@ const AuthProvider = ({ children }) => {
   const logout = async () => {
     await axios.get("http://localhost:3000/logout", { withCredentials: true }).catch(() => {});
     setAuth({ isAuthed: false, username: null, loading: false });
-    navigate("/login", { replace: true });
+    navigate("/loginpatient", { replace: true });
   };
 
   return (

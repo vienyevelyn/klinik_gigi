@@ -30,7 +30,7 @@ export default function PatientProfile() {
 
   const handleSave = async () => {
     try {
-      const res = await axios.put(`http://localhost:3000/patient/${id}`, tempData, { withCredentials: true });
+      const res = await axios.put(`http://localhost:3000/admin/${id}`, tempData, { withCredentials: true });
       console.log("Update response:", res.data);
       setPatient(res.data);
       setTempData(res.data);

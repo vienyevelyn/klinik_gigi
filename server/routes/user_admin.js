@@ -3,6 +3,10 @@ const router = express.Router();
 const adminController = require("../controllers/adminController")
 const doctorCategoryController = require("../controllers/doctorCategoryController")
 const workScheduleController = require("../controllers/workScheduleController")
+const middleware = require("../middleware/verifyUser")
+
+router.use(middleware.verifyUser);  
+router.use(middleware.grantRole("admin"))
 
 router.get("/doctorcategory", async (req, res)=>{
   try{
@@ -37,6 +41,27 @@ router.post("/doctorcategory", async (req, res) =>{
   }
 })
 
+router.put("/doctorcategory/:id", async (req, res)=>{
+  const { id } = req.params;
+  const data = req.body;
+
+   try {
+      if (!data.name || !data.description){
+        return res.status(400).json({message: "Data belum diisi lengkap"})
+      }
+      const updated = await doctorCategoryController.updateCategory(id, data)
+
+      console.log(updated);
+      return res.status(201).json({message:"Berhasil", data: updated});
+
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
+   }  
+)
+
 router.get("/workschedule", async (req, res)=>{
   try{
     const data = await workScheduleController.getAllWorkSchedule();
@@ -48,6 +73,44 @@ router.get("/workschedule", async (req, res)=>{
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
+router.post("/workschedule", async (req, res) =>{
+  const data = req.body;
+  if (!data.day_of_the_week || !data.start_time || !data.end_time || !data.room || !data.status) {
+    return res.status(400).json({message: "Data belum diisi lengkap"})
+  }
+  try{
+    const inputan = await workScheduleController.createWorkSchedule(data);
+
+    console.log(inputan);
+    return res.status(201).json({message:"Berhasil", data: inputan});
+  }
+  catch(err){
+    console.error('Error in route:', err);
+    return res.status(500).json({ error: "Failed to insert admin" });
+  }
+})
+
+router.put("/workschedule/:id", async (req, res)=>{
+  const { id } = req.params;
+  const data = req.body;
+
+   try {
+      if (!data.day_of_the_week || !data.start_time || !data.end_time ||!data.room ||!data.status){
+        return res.status(400).json({message: "Data belum diisi lengkap"})
+      }
+      const updated = await workScheduleController.updateWorkSchedule(id, data)
+
+      console.log(updated);
+      return res.status(201).json({message:"Berhasil", data: updated});
+
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
+   }  
+)
 
 router.get('/:id', async (req, res) => {
   try{

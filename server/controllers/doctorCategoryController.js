@@ -58,4 +58,28 @@ async function createCategory(data) {
     }
 }
 
-module.exports = {getAllCategory, createCategory}
+async function updateCategory(id, data) {
+    try{
+        const updated = await Category.update({
+            id_doctor_category: id,
+            name: data.name,
+            description: data.description,
+            last_updated_at: Date.now() 
+        },
+        {
+            where: {
+                id_doctor_category: id
+            }
+        }
+    );
+
+    // await getAllCategory()
+        return updated;
+
+    }
+    catch(err){
+        throw err;
+    }
+}
+
+module.exports = {getAllCategory, createCategory, updateCategory}

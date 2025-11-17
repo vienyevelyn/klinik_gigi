@@ -7,6 +7,9 @@ import LoginDoctor from './Login/LoginDoctor';
 import ProtectedRoute from './ProtectedRoute';
 import axios from 'axios';
 import PatientProfile from "./user_patient/PatientProfile";
+import PatientDoctorSchedule from "./user_patient/PatientDoctorSchedule";
+import PatientAppointment from "./user_patient/PatientAppointment";
+import PatientAppointmentList from "./user_patient/PatientAppointmentList";
 import AdminProfile from "./user_admin/AdminProfile";
 import LoginAdmin from './Login/LoginAdmin';
 import AdminDoctorCategory from './user_admin/AdminDoctorCategory';
@@ -65,6 +68,33 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+    <Route
+        path="/patient/doctorschedule"
+        element={
+          <ProtectedRoute>
+            <PatientDoctorSchedule />
+          </ProtectedRoute>
+        }
+      />
+
+    <Route
+        path="/patient/appointment"
+        element={
+          <ProtectedRoute>
+            <PatientAppointment />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patient/appointmentlist"
+        element={
+          <ProtectedRoute>
+            <PatientAppointmentList />
+          </ProtectedRoute>
+        }
+      />
+
     </Routes>
   );
 }

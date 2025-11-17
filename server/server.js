@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const patientRoutes = require("./routes/user_patient");
 const adminRoutes = require("./routes/user_admin");
+const middleware = require("./middleware/verifyUser")
 
 require('./models/associations');
 const port = process.env.PORT || 3000;
@@ -49,7 +50,11 @@ app.post("/loginpatient", async (req, res)=>{
       return res.status(401).json({ Status: "Fail", message: "Incorrect password" });
     }
 
-    const token = jwt.sign({username}, process.env.JWT_SECRET, {expiresIn: "1d"});
+    const token = jwt.sign({
+      username: data.username,
+      role: "patient",
+      id_patient: data.id_patient
+    }, process.env.JWT_SECRET, {expiresIn: "1d"});
     res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "lax" });
     return res.json({ Status: "Success", message: "Login successful" });
 
@@ -80,7 +85,11 @@ app.post("/logindoctor", async (req, res)=>{
       return res.status(401).json({ Status: "Fail", message: "Incorrect password" });
     }
 
-    const token = jwt.sign({username}, process.env.JWT_SECRET, {expiresIn: "1d"});
+    const token = jwt.sign({
+      username: data.username,
+      role: "doctor",
+      id_doctor: data.id_doctor
+    }, process.env.JWT_SECRET, {expiresIn: "1d"});
     res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "lax" });
     return res.json({ Status: "Success", message: "Login successful" });
 
@@ -109,7 +118,11 @@ app.post("/loginadmin", async (req, res)=>{
       return res.status(401).json({ Status: "Fail", message: "Incorrect password" });
     }
 
-    const token = jwt.sign({username}, process.env.JWT_SECRET, {expiresIn: "1d"});
+    const token = jwt.sign({
+      username: data.username,
+      role: "admin",
+      id_admin: data.id_admin
+    }, process.env.JWT_SECRET, {expiresIn: "1d"});
     res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "lax" });
     return res.json({ Status: "Success", message: "Login successful" });
 
@@ -122,18 +135,8 @@ app.post("/loginadmin", async (req, res)=>{
 
 
 
-const verifyUser = (req, res, next) =>{
-  const token = req.cookies.token;
-  if (!token) return res.status(401).json({ Error: "You are not authenticated" });
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.status(401).json({ Error: "Token is invalid" });
-
-    req.username = decoded.username;
-    next();
-  });
-}
-app.get("/", verifyUser, (req, res)=>{
+app.get("/", (req, res)=>{
   return res.json({ Status: "Success", username: req.username });
 });
 

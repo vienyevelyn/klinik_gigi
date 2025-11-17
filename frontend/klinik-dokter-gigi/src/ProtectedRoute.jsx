@@ -7,7 +7,7 @@ function ProtectedRoute({ children }) {
   
   if (auth.loading) return <div>Loading...</div>;
   
-  if (!auth.isAuthed) return <Navigate to="/login" replace />;
+  if (!auth.isAuthed) return <Navigate to="/loginpatient" replace />;
 
   return children;
 }

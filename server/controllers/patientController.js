@@ -110,7 +110,8 @@ async function editPatient(id, data) {
     console.error("Error updating patient data:", err);
     throw err;
   }
-
-
 }
+
+
+
 module.exports = { getUserFullData, editPatient };
