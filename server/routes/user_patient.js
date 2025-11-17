@@ -66,9 +66,9 @@ router.delete("/appointmentlist/:id", async (req, res)=>{
 })
 
 
-router.get('/:id', async (req, res) => {
+router.get('/profile', async (req, res) => {
   try{
-    const { id } = req.params; 
+     const id = req.id_patient;
     console.log(" Fetching user with ID:", id); 
     const data = await patientController.getUserFullData(id);
     console.log("Query result:", data);
@@ -83,9 +83,9 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res)=>{
+router.put("/profile", async (req, res)=>{
   try{
-    const { id } = req.params; 
+    const id = req.id_patient;
     const data = await patientController.editPatient(id, req.body);
     res.status(200).json(data);
   }

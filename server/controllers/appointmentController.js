@@ -1,5 +1,6 @@
 const WorkSchedule = require("../models/WorkScheduleModel");
 const Doctor = require("../models/DoctorModel");
+const Patient = require("../models/PatientModel");
 const DoctorSchedule = require("../models/DoctorScheduleModel");
 const DoctorCategory = require("../models/DoctorCategoryModel");
 const UserDetail = require("../models/UserDetailModel");
@@ -140,4 +141,59 @@ async function deleteAppointment(idPK){
     }
 }
 
-module.exports = {getAllDoctorSchedule,bookAppointment, getAllAppointment, deleteAppointment }
+async function adminGetAllAppointment(){
+     try{
+        const apt = await Appointment.findAll({
+            include: [
+                {
+                model: DoctorSchedule,
+                include: [
+                    {
+                        model: Doctor,
+                        include: [{
+                            model: User,
+                            include: [UserDetail]
+                        }]
+                    },
+                    {
+                        model: WorkSchedule
+                    },
+                    
+                
+                ]
+                },
+                {
+                    model: Patient
+                }
+              
+            ],
+            order: [["last_updated_at", "DESC"]]
+        });
+        return apt;
+    }
+    catch(err){
+        throw err;
+    }
+}
+
+async function updateStatus(id, data) {
+    try{
+        const updated = await Appointment.update({
+            status: data.status,
+            last_updated_at: new Date()
+        },
+        {
+            where: {
+                id_appointment: id
+            },
+        });    
+
+        return updated;
+
+    }
+    catch(err){
+        throw err;
+    }
+}
+
+module.exports = {getAllDoctorSchedule,bookAppointment, getAllAppointment, deleteAppointment, adminGetAllAppointment, updateStatus }

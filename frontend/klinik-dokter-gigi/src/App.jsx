@@ -14,6 +14,8 @@ import AdminProfile from "./user_admin/AdminProfile";
 import LoginAdmin from './Login/LoginAdmin';
 import AdminDoctorCategory from './user_admin/AdminDoctorCategory';
 import AdminWorkSchedule from './user_admin/AdminWorkSchedule';
+import AdminAppointment from './user_admin/AdminAppointment';
+import DoctorProfile from './user_doctor/DoctorProfile';
 
 axios.defaults.withCredentials = true;
 
@@ -35,17 +37,25 @@ function App() {
       />
 
       <Route
-        path="/patient/:id"
+        path="/patient/profile"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="patient">
             <PatientProfile />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/admin/:id"
+        path="/doctor/profile"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="doctor">
+            <DoctorProfile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/profile"
+        element={
+          <ProtectedRoute role="admin">
             <AdminProfile />
           </ProtectedRoute>
         }
@@ -54,7 +64,7 @@ function App() {
       <Route
         path="/admin/doctorcategory"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="admin">
             <AdminDoctorCategory />
           </ProtectedRoute>
         }
@@ -63,8 +73,17 @@ function App() {
       <Route
         path="/admin/workschedule"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="admin">
             <AdminWorkSchedule />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/appointment"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminAppointment />
           </ProtectedRoute>
         }
       />
@@ -72,7 +91,7 @@ function App() {
     <Route
         path="/patient/doctorschedule"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="patient">
             <PatientDoctorSchedule />
           </ProtectedRoute>
         }
@@ -81,7 +100,7 @@ function App() {
     <Route
         path="/patient/appointment"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="patient">
             <PatientAppointment />
           </ProtectedRoute>
         }
@@ -89,7 +108,7 @@ function App() {
       <Route
         path="/patient/appointmentlist"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute role="patient">
             <PatientAppointmentList />
           </ProtectedRoute>
         }

@@ -1,13 +1,16 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
 function LoginPatient() {
   const navigate = useNavigate();
+  const { setAuth } = useAuth(); // ✅ get setAuth from AuthContext
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,22 +20,48 @@ function LoginPatient() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("http://localhost:3000/loginpatient", formData)
-      .then(res => {
-        console.log("Response:", res.data);
-        if(res.data.Status === "Success"){
-          navigate("/"); 
+    setLoading(true);
+
+    try {
+      // 1️⃣ Login request
+      const resLogin = await axios.post(
+        "http://localhost:3000/loginpatient",
+        formData,
+        { withCredentials: true } // important for cookies
+      );
+
+      if (resLogin.data.Status === "Success") {
+        // 2️⃣ Fetch user info (to get username + role)
+        const resAuth = await axios.get("http://localhost:3000/", {
+          withCredentials: true,
+        });
+
+        if (resAuth.data.Status === "Success") {
+          // 3️⃣ Update AuthContext
+          setAuth({
+            isAuthed: true,
+            username: resAuth.data.username,
+            role: resAuth.data.role, // make sure backend sends role
+            loading: false,
+          });
+
+          // 4️⃣ Navigate safely to protected route
+          navigate("/patient/doctorschedule");
           alert("Login successful!");
         } else {
-          alert("Login failed: " + (res.data.message || "Invalid credentials"));
+          alert("Failed to fetch user info!");
         }
-      })
-      .catch(err => {
-        console.error("Axios error:", err);
-        alert("Login request failed!");
-      });
+      } else {
+        alert("Login failed: " + (resLogin.data.message || "Invalid credentials"));
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Login request failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,7 +70,7 @@ function LoginPatient() {
         <h2 className="text-center mb-4">Log In Patient</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="username">
+            <label>
               <strong>Username</strong>
             </label>
             <input
@@ -52,11 +81,12 @@ function LoginPatient() {
               value={formData.username}
               onChange={handleChange}
               required
+              disabled={loading}
             />
           </div>
 
           <div className="mb-3">
-            <label htmlFor="password">
+            <label>
               <strong>Password</strong>
             </label>
             <input
@@ -67,11 +97,16 @@ function LoginPatient() {
               value={formData.password}
               onChange={handleChange}
               required
+              disabled={loading}
             />
           </div>
 
-          <button type="submit" className="btn btn-success w-100 rounded-0">
-            Log In
+          <button
+            type="submit"
+            className="btn btn-success w-100 rounded-0"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
 
@@ -82,21 +117,18 @@ function LoginPatient() {
           </a>
         </p>
         <p className="mt-3 text-center">
-        
           <a href="/logindoctor" className="text-decoration-none">
             Switch to doctor
           </a>
-         
         </p>
         <p className="mt-3 text-center">
-        
           <a href="/loginadmin" className="text-decoration-none">
             Switch to admin
           </a>
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 export default LoginPatient;

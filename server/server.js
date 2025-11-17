@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const patientRoutes = require("./routes/user_patient");
 const adminRoutes = require("./routes/user_admin");
+const doctorRoutes = require("./routes/user_doctor");
 const middleware = require("./middleware/verifyUser")
 
 require('./models/associations');
@@ -136,8 +137,8 @@ app.post("/loginadmin", async (req, res)=>{
 
 
 
-app.get("/", (req, res)=>{
-  return res.json({ Status: "Success", username: req.username });
+app.get("/", middleware.verifyUser, (req, res) => {
+  return res.json({ Status: "Success", username: req.username, role: req.role });
 });
 
 app.post("/register", async (req, res)=>{
@@ -186,6 +187,7 @@ app.get("/logout", (req, res)=>{
 // patient
 app.use('/patient', patientRoutes);
 app.use('/admin', adminRoutes);
+app.use('/doctor', doctorRoutes);
 
 
 app.listen(port, ()=>{

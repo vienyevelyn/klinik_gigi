@@ -5,9 +5,10 @@ const sequelize = require("../config/db");
 
 async function getUserFullData(id) {
   try{
-    const data = await User.findByPk(id,
+    const data = await User.findOne(
         {
-            include: [UserDetail, Patient]
+          where: {id_patient: id},
+          include: [UserDetail, Patient]
         }
     );
      
@@ -44,9 +45,10 @@ async function getUserFullData(id) {
 
 async function editPatient(id, data) {
 
-  const data_user = await User.findByPk(id,
+  const data_user = await User.findOne(
         {
-            include: [UserDetail, Patient]
+          where: {id_patient: id},
+          include: [UserDetail, Patient]
         }
   );
 
@@ -64,7 +66,7 @@ async function editPatient(id, data) {
         phone: data.phone,
       },
       { where: 
-        { id_user: id }, 
+        { id_patient: id }, 
         transaction: t 
       }
     );

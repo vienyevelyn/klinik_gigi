@@ -1,47 +1,43 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 
 export default function PatientProfile() {
-  const { id } = useParams();
-  const [user, setPatient] = useState(null);
+  const [user, setUser] = useState(null);
   const [editSection, setEditSection] = useState(null);
   const [tempData, setTempData] = useState({});
 
   useEffect(() => {
+    // Fetch profile for the currently logged-in patient
     axios
-      .get(`http://localhost:3000/patient/${id}`)
+      .get("http://localhost:3000/patient/profile", { withCredentials: true })
       .then((res) => {
         console.log("Response data:", res.data);
-        setPatient(res.data);
+        setUser(res.data);
         setTempData(res.data);
       })
-      .catch((err) => console.error("Error fetching patient:", err));
-  }, [id]);
+      .catch((err) => console.error("Error fetching patient profile:", err));
+  }, []);
 
   if (!user) {
     return <div className="text-center mt-5">Loading patient data...</div>;
   }
 
-  // handle form change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTempData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // handle save (for now just updates state)
   const handleSave = async () => {
-    try{
-      const res = await axios.put(`http://localhost:3000/patient/${id}`, tempData, { withCredentials: true });
+    try {
+      const res = await axios.put("http://localhost:3000/patient/profile", tempData, { withCredentials: true });
       console.log("Update response:", res.data);
-      setPatient(res.data);
+      setUser(res.data);
       setTempData(res.data);
       setEditSection(null);
 
       alert("Patient profile updated successfully!");
-    }
-    catch(err){
-      console.error("Error updating patient:", err);
+    } catch (err) {
+      console.error("Error updating patient profile:", err);
       alert("Failed to update patient profile.");
     }
   };
@@ -207,11 +203,10 @@ function InputField({ label, name, value, editable, onChange, type = "text", opt
         type === "select" ? (
           <select
             name={name}
-            value={value || ""}  // ✅ keeps the current value from API or state
+            value={value || ""}
             onChange={onChange}
             className="form-select"
           >
-            {/* ✅ only show placeholder if value is empty */}
             {!value && <option value="">Select {label}</option>}
             {options.map((opt) => (
               <option key={opt} value={opt}>
@@ -234,4 +229,3 @@ function InputField({ label, name, value, editable, onChange, type = "text", opt
     </div>
   );
 }
-

@@ -1,13 +1,16 @@
 const User = require('../models/userModel');
 const UserDetail = require('../models/UserDetailModel');
 const sequelize = require("../config/db");
+const { where } = require('sequelize');
 
 async function getUserFullData(id) {
   try{
-    const data = await User.findByPk(id,
+    const data = await User.findOne(
         {
+            where: {id_admin: id},
             include: [UserDetail]
-        }
+        },
+       
     );
      
     
@@ -37,9 +40,10 @@ async function getUserFullData(id) {
 
 async function editAdmin(id, data) {
 
-  const data_user = await User.findByPk(id,
-        {
-            include: [UserDetail]
+  const data_user = await User.findOne(
+        { 
+          where: {id_admin: id},
+          include: [UserDetail]
         }
   );
 
@@ -57,7 +61,7 @@ async function editAdmin(id, data) {
         phone: data.phone,
       },
       { where: 
-        { id_user: id }, 
+        { id_admin: id }, 
         transaction: t 
       }
     );

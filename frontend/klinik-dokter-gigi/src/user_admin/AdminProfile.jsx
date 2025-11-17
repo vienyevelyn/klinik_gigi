@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 
-export default function PatientProfile() {
-  const { id } = useParams();
-  const [user, setPatient] = useState(null);
+export default function AdminProfile() {
+  const [user, setUser] = useState(null);
   const [editSection, setEditSection] = useState(null);
   const [tempData, setTempData] = useState({});
 
   useEffect(() => {
+    // Fetch profile for the currently logged-in admin
     axios
-      .get(`http://localhost:3000/admin/${id}`)
+      .get("http://localhost:3000/admin/profile", { withCredentials: true })
       .then((res) => {
         console.log("Response data:", res.data);
-        setPatient(res.data);
+        setUser(res.data);
         setTempData(res.data);
       })
-      .catch((err) => console.error("Error fetching patient:", err));
-  }, [id]);
+      .catch((err) => console.error("Error fetching admin profile:", err));
+  }, []);
 
   if (!user) {
-    return <div className="text-center mt-5">Loading patient data...</div>;
+    return <div className="text-center mt-5">Loading admin data...</div>;
   }
 
   const handleChange = (e) => {
@@ -30,16 +29,15 @@ export default function PatientProfile() {
 
   const handleSave = async () => {
     try {
-      const res = await axios.put(`http://localhost:3000/admin/${id}`, tempData, { withCredentials: true });
+      const res = await axios.put("http://localhost:3000/admin/profile", tempData, { withCredentials: true });
       console.log("Update response:", res.data);
-      setPatient(res.data);
+      setUser(res.data);
       setTempData(res.data);
       setEditSection(null);
-
-      alert("Patient profile updated successfully!");
+      alert("Admin profile updated successfully!");
     } catch (err) {
-      console.error("Error updating patient:", err);
-      alert("Failed to update patient profile.");
+      console.error("Error updating admin profile:", err);
+      alert("Failed to update admin profile.");
     }
   };
 

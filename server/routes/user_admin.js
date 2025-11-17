@@ -3,7 +3,9 @@ const router = express.Router();
 const adminController = require("../controllers/adminController")
 const doctorCategoryController = require("../controllers/doctorCategoryController")
 const workScheduleController = require("../controllers/workScheduleController")
+const appointmentController = require("../controllers/appointmentController")
 const middleware = require("../middleware/verifyUser")
+
 
 router.use(middleware.verifyUser);  
 router.use(middleware.grantRole("admin"))
@@ -112,9 +114,42 @@ router.put("/workschedule/:id", async (req, res)=>{
    }  
 )
 
-router.get('/:id', async (req, res) => {
+router.get("/appointment", async (req, res)=>{
   try{
-    const { id } = req.params; 
+    const data = await appointmentController.adminGetAllAppointment();
+    console.log(data)
+    return res.status(200).json(data);
+  }
+  catch(err){
+    console.error('Error fetching user data:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+router.put("/appointment/:id", async (req, res)=>{
+  const { id } = req.params;
+  const data = req.body;
+
+   try {
+      if (!data.status){
+        return res.status(400).json({message: "Data belum diisi lengkap"})
+      }
+      const updated = await appointmentController.updateStatus(id, data)
+
+      console.log(updated);
+      return res.status(201).json({message:"Berhasil", data: updated});
+
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
+   }  
+)
+
+router.get('/profile', async (req, res) => {
+  try{
+     const id = req.id_admin; 
     console.log(" Fetching user with ID:", id); 
     const data = await adminController.getUserFullData(id);
     console.log("Query result:", data);
@@ -129,9 +164,9 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res)=>{
+router.put("/profile", async (req, res)=>{
   try{
-    const { id } = req.params; 
+     const id = req.id_admin; 
     const data = await adminController.editAdmin(id, req.body);
     res.status(200).json(data);
   }
