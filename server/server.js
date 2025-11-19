@@ -1,6 +1,7 @@
+require('dotenv').config({ path: __dirname + '/.env' });;
+
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const userController = require('./controllers/userController');
 const sequelize = require('./config/db');
@@ -13,7 +14,8 @@ const middleware = require("./middleware/verifyUser")
 require('./models/associations');
 const port = process.env.PORT || 3000;
 
-dotenv.config();
+
+console.log("ENV TEST:", process.env.DB_USER, process.env.DB_HOST);
 
 const app = express();
 

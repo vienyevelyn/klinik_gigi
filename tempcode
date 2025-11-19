@@ -45,20 +45,19 @@ function LoginPatient() {
     <div className="d-flex bg-primary vh-100 w-100">
       <div style={{display: "flex", flex: 1}}>
         {/* left */}
-        <div style={{flex: 5, backgroundColor: "#5463A4", color: "white"}}>
+        <div style={{flex: 5, backgroundColor: "#5463A4", color: "white", padding: "30px"}}>
           <div style={{display: "flex", 
                       flexDirection: "column", 
                       justifyContent: "center", 
                       alignItems: "flex-end",
                       fontSize: "40px",
                       paddingTop: "60px"}}>
-
-            <a href="/loginpatient" style={{ textDecoration: "none", color: "white", paddingRight: "30px"}}>Patient Login</a>
-            <a href="/logindoctor" style={{ textDecoration: "none", color: "white", paddingRight: "30px"}}>Doctor Login</a>
-
-            <div style={{backgroundColor: "#E7EEFE", color: "#5463A4", borderRadius: "60px 0px 0px 60px", width: "300px", textAlign: "right", paddingRight: "30px"}}>
-              Admin Login
+            <div style={{backgroundColor: "#E7EEFE", color: "#5463A4", borderRadius: "60px"}}>
+              Patient Login
             </div>
+            
+            <a href="/logindoctor" style={{ textDecoration: "none", color: "white" }}>Doctor Login</a>
+            <a href="/loginadmin" style={{ textDecoration: "none", color: "white" }}>Admin Login</a>
           </div>  
 
           <div style={{ width: "100%", textAlign: "center", marginTop: "40px" }}>
@@ -74,7 +73,7 @@ function LoginPatient() {
                     flexDirection: "column",
                     alignItems: "center",
                     fontSize: "20px"}}>
-          <h1>ADMIN LOGIN</h1>
+          <h1>PATIENT LOGIN</h1>
           <br />
           <form onSubmit={handleSubmit} style={{width: "60%"}}>
             <div style={{marginBottom: "30px"}}>
@@ -160,7 +159,7 @@ function LoginPatient() {
               </div>
             </div>
 
-            {/* <p style={{textAlign: "center"}}>Don't have an account? <a href="/register">Register</a></p> */}
+            <p style={{textAlign: "center"}}>Don't have an account? <a href="/register">Register</a></p>
 
             <button type="submit" style={{backgroundColor: "#170C81", border: "none"}} className="btn btn-success w-100 rounded-0">
               Log In

@@ -1,13 +1,19 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import loginImg from "../assets/loginimg.png";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
-function LoginDoctor() {
+
+function LoginPatient() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
   });
+
+  //password show
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,11 +25,11 @@ function LoginDoctor() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:3000/logindoctor", formData) // separate backend route for doctors
+    axios.post("http://localhost:3000/loginpatient", formData)
       .then(res => {
         console.log("Response:", res.data);
         if(res.data.Status === "Success"){
-          navigate("/"); // redirect to doctor dashboard
+          navigate("/"); 
           alert("Login successful!");
         } else {
           alert("Login failed: " + (res.data.message || "Invalid credentials"));
@@ -36,61 +42,136 @@ function LoginDoctor() {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center bg-primary vh-100">
-      <div className="bg-white p-4 rounded-3" style={{ width: "400px" }}>
-        <h2 className="text-center mb-4">Doctor Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="username">
-              <strong>Username</strong>
-            </label>
-            <input
-              type="text"
-              placeholder="Enter username"
-              name="username"
-              className="form-control rounded-0"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </div>
+    <div className="d-flex bg-primary vh-100 w-100">
+      <div style={{display: "flex", flex: 1}}>
+        {/* left */}
+        <div style={{flex: 5, backgroundColor: "#5463A4", color: "white"}}>
+          <div style={{display: "flex", 
+                      flexDirection: "column", 
+                      justifyContent: "center", 
+                      alignItems: "flex-end",
+                      fontSize: "40px",
+                      paddingTop: "60px"}}>
 
-          <div className="mb-3">
-            <label htmlFor="password">
-              <strong>Password</strong>
-            </label>
-            <input
-              type="password"
-              placeholder="Enter Password"
-              name="password"
-              className="form-control rounded-0"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
+            <a href="/loginpatient" style={{ textDecoration: "none", color: "white", paddingRight: "30px"}}>Patient Login</a>
 
-          <button type="submit" className="btn btn-success w-100 rounded-0">
-            Log In
-          </button>
-        </form>
-
-        <p className="mt-3 text-center">
+            <div style={{backgroundColor: "#E7EEFE", color: "#5463A4", borderRadius: "60px 0px 0px 60px", width: "300px", textAlign: "right", paddingRight: "30px"}}>
+              Doctor Login
+            </div>
           
-         <a href="/loginpatient" className="text-decoration-none">
-            Switch to patient
-          </a>
-         
-        </p>
-        <p className="mt-3 text-center">
-        
-          <a href="/loginadmin" className="text-decoration-none">
-            Switch to admin
-          </a>
-        </p>
+            <a href="/loginadmin" style={{ textDecoration: "none", color: "white", paddingRight: "30px"}}>Admin Login</a>
+          </div>  
+
+          <div style={{ width: "100%", textAlign: "center", marginTop: "40px" }}>
+            <img src={loginImg} alt="teeth" style={{ maxWidth: "80%", height: "auto", width: "70%"}} />
+          </div>
+        </div>
+        {/* right */}
+        <div style={{flex: 4, 
+                    backgroundColor: "#E7EEFE",
+                    color: "#170C81", 
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    fontSize: "20px"}}>
+          <h1>DOCTOR LOGIN</h1>
+          <br />
+          <form onSubmit={handleSubmit} style={{width: "60%"}}>
+            <div style={{marginBottom: "30px"}}>
+              <label htmlFor="username">
+                <h4>Username</h4>
+              </label>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  padding: "0 10px", 
+                  height: "40px",    
+                  backgroundColor: "white",
+                }}
+>               
+                <i className="bi bi-person-circle" style={{ color: "#170C81", marginRight: "8px" }}></i>
+
+                <input
+                  type="text"
+                  placeholder="Enter username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                  style={{
+                    border: "none",       
+                    outline: "none",      
+                    flex: 1,              
+                    height: "100%",       
+                    fontSize: "16px",
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{marginBottom: "30px"}}>
+              <label htmlFor="username">
+                <h4>Password</h4>
+              </label>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  padding: "0 10px", 
+                  height: "40px",    
+                  backgroundColor: "white",
+                }}>
+                
+                <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    style={{
+      border: "none",
+      background: "transparent", 
+      padding: 0,
+      cursor: "pointer"
+    }}
+  >
+    <i className={showPassword ? "bi bi-unlock2" : "bi bi-lock"} style={{ color: "#170C81" }}></i>
+  </button>
+
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter password"
+                  name="password"
+                  className="form-control rounded-0"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  style={{
+                    border: "none",       
+                    outline: "none",      
+                    flex: 1,              
+                    height: "100%",       
+                    fontSize: "16px",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* <p style={{textAlign: "center"}}>Don't have an account? <a href="/register">Register</a></p> */}
+
+            <button type="submit" style={{backgroundColor: "#170C81", border: "none"}} className="btn btn-success w-100 rounded-0">
+              Log In
+            </button>
+          </form>
+        </div>
       </div>
+      
     </div>
   )
 }
 
-export default LoginDoctor;
+export default LoginPatient;
