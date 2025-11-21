@@ -4,6 +4,7 @@ const adminController = require("../controllers/adminController")
 const doctorCategoryController = require("../controllers/doctorCategoryController")
 const workScheduleController = require("../controllers/workScheduleController")
 const appointmentController = require("../controllers/appointmentController")
+const treatmentController = require("../controllers/treatmentController")
 const middleware = require("../middleware/verifyUser")
 
 
@@ -191,5 +192,15 @@ router.put("/profile", async (req, res)=>{
 })
 
 
-
+router.get("/treatments", async (req, res)=>{
+  try{
+    const data = await treatmentController.getAllTreatment();
+    console.log(data)
+    return res.status(200).json(data);
+  }
+  catch(err){
+    console.error('Error fetching user data:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 module.exports = router;

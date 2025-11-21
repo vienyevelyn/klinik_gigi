@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function DoctorRecordTable() {
   const [recordsIncomplete, setRecordsIncomplete] = useState([]);
@@ -16,6 +17,14 @@ export default function DoctorRecordTable() {
     status: "complete", // Always set to complete when submitting
   });
 
+  const navigate = useNavigate()
+  const handlePrescribe = (recordId) => {
+    navigate(`/doctor/prescription/${recordId}`);
+  };
+
+    const handleTreatment = (recordId) => {
+    navigate(`/doctor/treatment/${recordId}`);
+  };
   // Fetch records (incomplete + complete)
   const fetchRecords = async () => {
     try {
@@ -186,6 +195,20 @@ export default function DoctorRecordTable() {
 
               <td>
                 <span className="badge bg-success">Completed</span>
+              </td>
+              <td>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => handlePrescribe(rec.id_record)}
+                >
+                  Prescribe
+                </button>
+                <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => handleTreatment(rec.id_record)}
+                  >
+                    Treatment
+                </button>
               </td>
             </tr>
           ))}
