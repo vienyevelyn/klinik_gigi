@@ -126,15 +126,29 @@ router.get("/appointment", async (req, res)=>{
   }
 });
 
-router.put("/appointment/:id", async (req, res)=>{
+router.put("/appointment/:id/attend", async (req, res)=>{
   const { id } = req.params;
-  const data = req.body;
 
    try {
-      if (!data.status){
-        return res.status(400).json({message: "Data belum diisi lengkap"})
-      }
-      const updated = await appointmentController.updateStatus(id, data)
+    
+      const updated = await appointmentController.statusAttend(id)
+
+      console.log(updated);
+      return res.status(201).json({message:"Berhasil", data: updated});
+
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
+   }  
+)
+router.put("/appointment/:id/cancel", async (req, res)=>{
+  const { id } = req.params;
+
+   try {
+     
+      const updated = await appointmentController.statusCancel(id)
 
       console.log(updated);
       return res.status(201).json({message:"Berhasil", data: updated});

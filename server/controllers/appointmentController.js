@@ -6,6 +6,7 @@ const DoctorCategory = require("../models/DoctorCategoryModel");
 const UserDetail = require("../models/UserDetailModel");
 const User = require("../models/userModel");
 const Appointment = require("../models/AppointmentModel");
+const MedicalRecord = require("../models/MedicalRecordModel");
 
 
 async function getAllDoctorSchedule(){
@@ -176,10 +177,64 @@ async function adminGetAllAppointment(){
     }
 }
 
-async function updateStatus(id, data) {
+async function statusAttend(id_a) {
+    try{
+        await Appointment.update({
+            status: "attended",
+            last_updated_at: new Date()
+        },
+        {
+            where: {
+                id_appointment: id_a
+            },
+        }
+    );    
+
+    const data =  await Appointment.findByPk(id_a,
+        {
+            include: [DoctorSchedule]
+        }
+    )
+
+    if (!data) {
+            throw new Error("Appointment not found");
+    }
+
+        let id = "";
+        const checkempty = await MedicalRecord.findAndCountAll();
+        console.log(checkempty);
+        if(checkempty.count <= 0){
+            id = "MR001";
+        }
+        else{
+            
+            const last = await MedicalRecord.findOne({
+                order: [["id_record", "DESC"]]
+            });
+                const newNum = parseInt(last.id_record.slice(2), 10) + 1;
+                id = "MR" + String(newNum).padStart(3, '0');
+                
+            }
+            
+                const apt = await MedicalRecord.create({
+                id_record: id,
+                id_appointment: data.id_appointment,
+                id_patient : data.id_patient,
+                id_doctor : data.doctor_schedule.id_doctor,
+                status: "incomplete"
+            });
+
+            return apt;         
+            
+    }
+    catch(err){
+        throw err;
+    }
+}
+async function statusCancel(id) {
     try{
         const updated = await Appointment.update({
-            status: data.status,
+            status: "cancelled",
             last_updated_at: new Date()
         },
         {
@@ -187,6 +242,8 @@ async function updateStatus(id, data) {
                 id_appointment: id
             },
         });    
+
+
 
         return updated;
 
@@ -196,4 +253,5 @@ async function updateStatus(id, data) {
     }
 }
 
-module.exports = {getAllDoctorSchedule,bookAppointment, getAllAppointment, deleteAppointment, adminGetAllAppointment, updateStatus }
+
+module.exports = {getAllDoctorSchedule,bookAppointment, getAllAppointment, deleteAppointment, adminGetAllAppointment, statusAttend, statusCancel }

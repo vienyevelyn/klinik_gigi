@@ -48,7 +48,7 @@ function LoginDoctor() {
           });
 
           // 4️⃣ Navigate to doctor dashboard
-          navigate("/doctor/dashboard"); // <-- change this to your doctor route
+          navigate("/doctor/profile"); // <-- change this to your doctor route
           alert("Login successful!");
         } else {
           alert("Failed to fetch user info!");

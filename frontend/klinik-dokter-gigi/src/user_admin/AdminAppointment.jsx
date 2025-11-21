@@ -24,14 +24,15 @@ export default function AdminAppointmentPage() {
     fetchAppointments();
   }, []);
 
-  const markFinished = async (id) => {
+  // Mark attended
+  const markAttend = async (id) => {
     try {
       await axios.put(
-        `http://localhost:3000/admin/appointment/${id}`,
-        { status: "finished" },
+        `http://localhost:3000/admin/appointment/${id}/attend`,
+        {},
         { withCredentials: true }
       );
-      alert("Appointment marked as finished");
+      alert("Appointment marked as attended");
       fetchAppointments();
     } catch (err) {
       console.error(err);
@@ -39,13 +40,14 @@ export default function AdminAppointmentPage() {
     }
   };
 
+  // Cancel appointment
   const cancelAppointment = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this appointment?")) return;
 
     try {
       await axios.put(
-        `http://localhost:3000/admin/appointment/${id}`,
-        { status: "cancelled" },
+        `http://localhost:3000/admin/appointment/${id}/cancel`,
+        {},
         { withCredentials: true }
       );
       alert("Appointment cancelled");
@@ -77,9 +79,8 @@ export default function AdminAppointmentPage() {
         >
           <option value="all">All</option>
           <option value="scheduled">Scheduled</option>
-          <option value="doctor approval">Doctor Approval</option>
+          <option value="attended">Attended</option>
           <option value="cancelled">Cancelled</option>
-          <option value="finished">Finished</option>
         </select>
       </div>
 
@@ -128,20 +129,21 @@ export default function AdminAppointmentPage() {
                   {/* Admin Action Buttons */}
                   <div className="d-flex gap-2">
                     {appt.status === "scheduled" && (
-                      <button
-                        className="btn btn-danger flex-fill"
-                        onClick={() => cancelAppointment(appt.id_appointment)}
-                      >
-                        Cancel
-                      </button>
-                    )}
-                    {appt.status === "doctor approval" && (
-                      <button
-                        className="btn btn-primary flex-fill"
-                        onClick={() => markFinished(appt.id_appointment)}
-                      >
-                        Mark as Finished
-                      </button>
+                      <>
+                        <button
+                          className="btn btn-success flex-fill"
+                          onClick={() => markAttend(appt.id_appointment)}
+                        >
+                          Attend
+                        </button>
+
+                        <button
+                          className="btn btn-danger flex-fill"
+                          onClick={() => cancelAppointment(appt.id_appointment)}
+                        >
+                          Cancel
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>

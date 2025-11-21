@@ -16,6 +16,8 @@ import AdminDoctorCategory from './user_admin/AdminDoctorCategory';
 import AdminWorkSchedule from './user_admin/AdminWorkSchedule';
 import AdminAppointment from './user_admin/AdminAppointment';
 import DoctorProfile from './user_doctor/DoctorProfile';
+import DoctorPickSchedule from './user_doctor/DoctorWorkSchedule';
+import DoctorIncompleteRecords from './user_doctor/DoctorRecord';
 
 axios.defaults.withCredentials = true;
 
@@ -110,6 +112,24 @@ function App() {
         element={
           <ProtectedRoute role="patient">
             <PatientAppointmentList />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/doctor/workschedule"
+        element={
+          <ProtectedRoute role="doctor">
+            <DoctorPickSchedule />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/doctor/record"
+        element={
+          <ProtectedRoute role="doctor">
+            <DoctorIncompleteRecords />
           </ProtectedRoute>
         }
       />
