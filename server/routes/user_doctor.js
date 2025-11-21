@@ -120,26 +120,41 @@ router.put("/currentschedule", async (req, res)=>{
 router.get("/record", async(req, res)=>{
 
   try {
-    // const data = req.body;
 
-    // if(!data.symptom || !data.diagnosis || !data.doctor_note){
-    //   return res.status(400).json({message: "Data belum diisi lengkap"})
-    // }
     const id = req.id_doctor;
     console.log("Fetching doctor with ID:", id);
-    const inputan = await medicalRecordController.getAllIncompleteRecord(id);
-    console.log("Query result:", inputan);
+    const incomplete  = await medicalRecordController.getAllIncompleteRecord(id);
+    const complete  = await medicalRecordController.getAllCompleteRecord(id);
 
-    if (!inputan) {
-      return res.status(404).json({ message: 'Doctor not found' });
-    }
+    console.log(complete )
+    res.status(200).json({
+      incomplete,
+      complete 
+    });
 
-    res.status(200).json(inputan);
   } catch (err) {
     console.error('Error fetching doctor data:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
   
+})
+
+router.put("/record", async (req, res)=>{
+  const data = req.body;
+  const id = req.id_doctor;
+    if ( !data.symptom|| !data.diagnosis || !data.doctor_note || !data.id_record) {
+      return res.status(400).json({message: "Data belum diisi lengkap"})
+    }
+    try{
+      const inputan = await medicalRecordController.editRecord(id, data);
+  
+      console.log(inputan);
+      return res.status(200).json({message:"Berhasil", data: inputan});
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
 })
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes, DATE } = require("sequelize");
 const sequelize = require("../config/db");
+const { stat } = require("fs");
 
 const MedicalRecord = sequelize.define("medical_records", {
   id_record: {
@@ -36,6 +37,12 @@ const MedicalRecord = sequelize.define("medical_records", {
   doctor_note: {
     type: DataTypes.STRING(255),
     allowNull: true,
+  },
+
+  status: {
+    type: DataTypes.ENUM("complete", "incomplete"),
+    allowNull: false,
+    defaultValue: "incomplete"
   },
 
   created_at: {
