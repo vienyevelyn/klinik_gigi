@@ -3,127 +3,117 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function DoctorTreatmentPage() {
-  const { id_record } = useParams(); // Get record ID from URL
+  const { id_record } = useParams();
   const navigate = useNavigate();
 
   const [record, setRecord] = useState(null);
-  const [treatments, setTreatments] = useState([
-    { medicine: "", dosage: "", notes: "" }
-  ]);
+  const [treatmentOptions, setTreatmentOptions] = useState([]);
+  const [selectedTreatment, setSelectedTreatment] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch medical record data
+  // Fetch record
   const fetchRecord = async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/doctor/record/${id_record}`, {
-        withCredentials: true
-      });
+      const res = await axios.get(
+        `http://localhost:3000/doctor/record/${id_record}`,
+        { withCredentials: true }
+      );
       setRecord(res.data);
-      setLoading(false);
     } catch (err) {
       console.log(err);
-      setLoading(false);
+    }
+  };
+
+  // Fetch all treatment options
+  const fetchTreatmentOptions = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/doctor/treatment/${id_record}`,
+        { withCredentials: true }
+      );
+      setTreatmentOptions(res.data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
   useEffect(() => {
-    fetchRecord();
+    Promise.all([fetchRecord(), fetchTreatmentOptions()]).then(() =>
+      setLoading(false)
+    );
   }, [id_record]);
 
-  // Add new empty treatment row
-  const addTreatment = () => {
-    setTreatments([...treatments, { medicine: "", dosage: "", notes: "" }]);
-  };
-
-  // Remove a treatment row
-  const removeTreatment = (index) => {
-    const newTreatments = [...treatments];
-    newTreatments.splice(index, 1);
-    setTreatments(newTreatments);
-  };
-
-  // Handle input change
-  const handleChange = (index, field, value) => {
-    const newTreatments = [...treatments];
-    newTreatments[index][field] = value;
-    setTreatments(newTreatments);
-  };
-
-  // Submit treatments to backend
+  // Submit ONE treatment
   const handleSubmit = async () => {
+    if (!selectedTreatment) {
+      return alert("Please select a treatment");
+    }
+
     try {
       await axios.post(
-        `http://localhost:3000/doctor/record/${id_record}/treatment`,
-        { treatments },
+        `http://localhost:3000/doctor/treatment/${id_record}`,
+        { id_treatment: selectedTreatment },
         { withCredentials: true }
       );
-      alert("Treatments saved successfully!");
-      navigate("/doctor/records"); // Back to records page
+
+      alert("Treatment saved successfully!");
+      navigate("/doctor/records");
     } catch (err) {
       console.log(err);
-      alert("Failed to save treatments");
+      alert("Failed to save treatment");
     }
   };
 
-  if (loading) return <p>Loading record...</p>;
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="container p-5">
-      <h2 className="text-xl font-bold mb-4">Add Treatments for Record #{id_record}</h2>
+      <h2 className="text-xl font-bold mb-4">
+        Add Treatment for Record #{id_record}
+      </h2>
 
-      <p><strong>Patient:</strong> {record?.first_name} {record?.last_name}</p>
-      <p><strong>Diagnosis:</strong> {record?.diagnosis}</p>
+      <p>
+        <strong>Patient:</strong> {record?.first_name} {record?.last_name}
+      </p>
+      <p>
+        <strong>Diagnosis:</strong> {record?.diagnosis}
+      </p>
 
       <hr className="my-4" />
 
-      {treatments.map((t, index) => (
-        <div key={index} className="mb-3 border p-3 rounded">
-          <div className="mb-2">
-            <label className="form-label">Medicine</label>
-            <input
-              type="text"
-              className="form-control"
-              value={t.medicine}
-              onChange={(e) => handleChange(index, "medicine", e.target.value)}
-            />
-          </div>
+      {/* TABLE OF TREATMENTS */}
+      <h4 className="mb-3">Select Treatment</h4>
 
-          <div className="mb-2">
-            <label className="form-label">Dosage</label>
-            <input
-              type="text"
-              className="form-control"
-              value={t.dosage}
-              onChange={(e) => handleChange(index, "dosage", e.target.value)}
-            />
-          </div>
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th>Select</th>
+            <th>Treatment Name</th>
+            <th>Cost</th>
+          </tr>
+        </thead>
 
-          <div className="mb-2">
-            <label className="form-label">Notes</label>
-            <textarea
-              className="form-control"
-              value={t.notes}
-              onChange={(e) => handleChange(index, "notes", e.target.value)}
-            ></textarea>
-          </div>
+        <tbody>
+          {treatmentOptions.map((t) => (
+            <tr key={t.id_treatment}>
+              <td>
+                <input
+                  type="radio"
+                  name="treatmentSelect"
+                  value={t.id_treatment}
+                  checked={selectedTreatment === t.id_treatment}
+                  onChange={() => setSelectedTreatment(t.id_treatment)}
+                />
+              </td>
+              <td>{t.procedure_name}</td>
+              <td>Rp {t.cost}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-          <button
-            className="btn btn-danger btn-sm"
-            onClick={() => removeTreatment(index)}
-          >
-            Remove
-          </button>
-        </div>
-      ))}
-
-      <button className="btn btn-secondary mb-3" onClick={addTreatment}>
-        Add Treatment
-      </button>
-
-      <br />
-
-      <button className="btn btn-success" onClick={handleSubmit}>
-        Save Treatments
+      <button className="btn btn-success mt-3" onClick={handleSubmit}>
+        Save Treatment
       </button>
     </div>
   );

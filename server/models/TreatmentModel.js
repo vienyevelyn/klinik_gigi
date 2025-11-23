@@ -22,7 +22,7 @@ const TreatmentModel = sequelize.define('treatments', {
   },
   last_updated_at: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
   deleted_at: {
     type: DataTypes.DATE,

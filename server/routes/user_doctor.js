@@ -5,6 +5,8 @@ const middleware = require("../middleware/verifyUser");
 const doctorCategoryController = require("../controllers/doctorCategoryController")
 const workScheduleController = require("../controllers/workScheduleController")
 const medicalRecordController = require("../controllers/medicalRecordController")
+const treatmentController = require("../controllers/treatmentController")
+
 
 router.use(middleware.verifyUser);
 router.use(middleware.grantRole("doctor"));
@@ -156,5 +158,38 @@ router.put("/record", async (req, res)=>{
       return res.status(500).json({ error: "Failed to update admin" });
     }
 })
+
+router.get("/treatment/:id_record", async (req, res)=>{
+  try{
+    const data = await treatmentController.getAllTreatment();
+    console.log(data)
+    return res.status(200).json(data);
+  }
+  catch(err){
+    console.error('Error fetching user data:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+router.post("/treatment/:id_record", async (req, res)=>{
+  try{
+    const { id_record } = req.params;
+    const data = req.body;
+
+    if (!data.id_treatment) {
+      return res.status(400).json({ message: "id_treatment is required" });
+    }
+
+    const saved = await treatmentController.treatment_patient(id_record, data);
+
+    console.log(saved);
+    return res.status(201).json({message:"Berhasil", data: saved});
+
+  }
+  catch(err){
+     console.error('Error fetching user data:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
 module.exports = router;

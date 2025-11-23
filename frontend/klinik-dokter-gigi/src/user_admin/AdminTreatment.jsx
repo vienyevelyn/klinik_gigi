@@ -5,7 +5,7 @@ export default function AdminTreatmentPage() {
   const [treatments, setTreatments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); // track if updating
+  const [isEditing, setIsEditing] = useState(false);
 
   const [formData, setFormData] = useState({
     id_treatment: "",
@@ -13,11 +13,13 @@ export default function AdminTreatmentPage() {
     cost: "",
   });
 
+  // Fetch all treatments
   const fetchTreatments = async () => {
     try {
       const res = await axios.get("http://localhost:3000/admin/treatments", {
         withCredentials: true,
       });
+
       setTreatments(res.data || []);
       setLoading(false);
     } catch (err) {
@@ -30,6 +32,7 @@ export default function AdminTreatmentPage() {
     fetchTreatments();
   }, []);
 
+  // Open form for add or edit
   const openForm = (treatment = null) => {
     if (treatment) {
       setFormData({
@@ -39,7 +42,11 @@ export default function AdminTreatmentPage() {
       });
       setIsEditing(true);
     } else {
-      setFormData({ id_treatment: "", procedure_name: "", cost: "" });
+      setFormData({
+        id_treatment: "",
+        procedure_name: "",
+        cost: "",
+      });
       setIsEditing(false);
     }
     setShowForm(true);
@@ -50,44 +57,61 @@ export default function AdminTreatmentPage() {
   const handleFormChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // Submit Add / Update
   const handleSubmit = async () => {
-    if (!formData.id_treatment || !formData.procedure_name || !formData.cost) {
+    if (!formData.procedure_name || !formData.cost) {
       alert("Please fill all required fields.");
       return;
     }
 
     try {
       if (isEditing) {
-        // Update treatment
+        // UPDATE (matches your backend PUT)
         await axios.put(
           `http://localhost:3000/admin/treatments/${formData.id_treatment}`,
-          formData,
+          {
+            procedure_name: formData.procedure_name,
+            cost: formData.cost,
+          },
           { withCredentials: true }
         );
+
         alert("Treatment updated successfully!");
       } else {
-        // Add new treatment
+        // ADD (backend auto-generates ID)
         await axios.post(
           "http://localhost:3000/admin/treatments",
-          formData,
+          {
+            procedure_name: formData.procedure_name,
+            cost: formData.cost,
+          },
           { withCredentials: true }
         );
+
         alert("Treatment added successfully!");
       }
+
       closeForm();
       fetchTreatments();
     } catch (err) {
       console.log(err);
-      alert("Failed to save treatment.");
+
+      if (err.response && err.response.status === 409) {
+        alert("Treatment name already exists.");
+      } else {
+        alert("Failed to save treatment.");
+      }
     }
   };
 
+  // Delete treatment
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this treatment?")) {
       try {
         await axios.delete(`http://localhost:3000/admin/treatments/${id}`, {
           withCredentials: true,
         });
+
         fetchTreatments();
         alert("Treatment deleted successfully!");
       } catch (err) {
@@ -149,6 +173,7 @@ export default function AdminTreatmentPage() {
         </tbody>
       </table>
 
+      {/* Modal */}
       {showForm && (
         <div
           className="modal show fade d-block"
@@ -162,6 +187,7 @@ export default function AdminTreatmentPage() {
                 </h5>
                 <button className="btn-close" onClick={closeForm}></button>
               </div>
+
               <div className="modal-body">
                 <label className="form-label">Treatment ID</label>
                 <input
@@ -169,7 +195,6 @@ export default function AdminTreatmentPage() {
                   className="form-control mb-3"
                   name="id_treatment"
                   value={formData.id_treatment}
-                  onChange={handleFormChange}
                   disabled
                 />
 
@@ -191,6 +216,7 @@ export default function AdminTreatmentPage() {
                   onChange={handleFormChange}
                 />
               </div>
+
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={closeForm}>
                   Cancel

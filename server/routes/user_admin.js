@@ -203,4 +203,46 @@ router.get("/treatments", async (req, res)=>{
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
+router.post("/treatments", async (req, res) =>{
+  const data = req.body;
+  if (!data.procedure_name || !data.cost) {
+    return res.status(400).json({message: "Data belum diisi lengkap"})
+  }
+  try{
+    const inputan = await treatmentController.createTreatment(data);
+
+    if (inputan === false) {
+      return res.status(409).json({ message: "Nama treatment sudah ada" });
+    }
+
+    console.log(inputan);
+    return res.status(201).json({message:"Berhasil", data: inputan});
+  }
+  catch(err){
+    console.error('Error in route:', err);
+    return res.status(500).json({ error: "Failed to insert admin" });
+  }
+})
+
+router.put("/treatments/:id", async (req, res)=>{
+  const { id } = req.params;
+  const data = req.body;
+
+   try {
+      if (!data.procedure_name || !data.cost) {
+        return res.status(400).json({message: "Data belum diisi lengkap"})
+      }
+      const updated = await treatmentController.updateTreatment(id, data)
+
+      console.log(updated);
+      return res.status(201).json({message:"Berhasil", data: updated});
+
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
+   }  
+)
 module.exports = router;
