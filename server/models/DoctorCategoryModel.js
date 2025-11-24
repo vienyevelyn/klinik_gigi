@@ -1,20 +1,16 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
-const DoctorCategory = sequelize.define(
-  "doctor_categories",
+const Prescription = sequelize.define(
+  "prescriptions",
   {
-    id_doctor_category: {
+    id_prescription: {
       type: DataTypes.STRING(5),
       primaryKey: true,
       allowNull: false,
     },
-    name: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING(255),
+    id_record: {
+      type: DataTypes.STRING(5),
       allowNull: false,
     },
     created_at: {
@@ -32,9 +28,9 @@ const DoctorCategory = sequelize.define(
     },
   },
   {
-    tableName: "doctor_categories",
-    timestamps: false, 
+    tableName: "prescriptions",
+    timestamps: false,
   }
 );
 
-module.exports = DoctorCategory;
+module.exports = Prescription;

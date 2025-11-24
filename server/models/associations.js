@@ -8,6 +8,10 @@ const DoctorSchedule = require('./DoctorScheduleModel');
 const WorkSchedule = require('./WorkScheduleModel');
 const Appointment = require('./AppointmentModel');
 const MedicalRecord = require('./MedicalRecordModel');
+const Treatment = require('./TreatmentModel');
+const RecordTreatment = require('./RecordTreatmentModel');
+
+const PrescriptionDetail = require("./PrescriptionDetailModel");
 
 Appointment.belongsTo(DoctorSchedule, {
   foreignKey: "id_doctor_schedule",
@@ -115,6 +119,29 @@ Appointment.hasOne(MedicalRecord, {
   foreignKey: "id_appointment"
 });
 
+// MedicalRecord -> RecordTreatment
+MedicalRecord.hasMany(RecordTreatment, {
+    foreignKey: "id_record",
+    sourceKey: "id_record",
+});
+
+RecordTreatment.belongsTo(MedicalRecord, {
+    foreignKey: "id_record",
+    targetKey: "id_record",
+});
+
+Treatment.hasMany(RecordTreatment, {
+    foreignKey: "id_treatment",
+    sourceKey: "id_treatment",
+});
+
+RecordTreatment.belongsTo(Treatment, {
+    foreignKey: "id_treatment",
+    targetKey: "id_treatment",
+});
+
+
+
 
 module.exports = {
   User,
@@ -123,5 +150,7 @@ module.exports = {
   Doctor,
   WorkSchedule,
   DoctorSchedule,
-  DoctorCategory
+  DoctorCategory,
+  Treatment,
+  RecordTreatment
 };

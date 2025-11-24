@@ -6,6 +6,7 @@ const doctorCategoryController = require("../controllers/doctorCategoryControlle
 const workScheduleController = require("../controllers/workScheduleController")
 const medicalRecordController = require("../controllers/medicalRecordController")
 const treatmentController = require("../controllers/treatmentController")
+const prescriptionController = require("../controllers/prescriptionController")
 
 
 router.use(middleware.verifyUser);
@@ -161,9 +162,11 @@ router.put("/record", async (req, res)=>{
 
 router.get("/treatment/:id_record", async (req, res)=>{
   try{
+    const { id_record } = req.params;
+    const data2 = await treatmentController.getAllRecordTreatment(id_record);
     const data = await treatmentController.getAllTreatment();
-    console.log(data)
-    return res.status(200).json(data);
+    console.log(data2)
+    return res.status(200).json({data, data2});
   }
   catch(err){
     console.error('Error fetching user data:', err);
@@ -191,5 +194,67 @@ router.post("/treatment/:id_record", async (req, res)=>{
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
+router.post("/prescription/:id_record", async (req, res)=>{
+  try{
+    const { id_record } = req.params;
+    const data = req.body;
+
+  
+
+    const saved = await prescriptionController.createPrescription(id_record, data);
+
+    console.log(saved);
+    return res.status(201).json({message:"Berhasil", data: saved});
+
+  }
+  catch(err){
+     console.error('Error fetching user data:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+router.get("/prescription/:id_record", async (req, res)=>{
+  try{
+    const { id_record } = req.params;
+    const data = await prescriptionController.getAllPrescription(id_record);
+    console.log(data)
+    return res.status(200).json(data);
+  }
+  catch(err){
+    console.error('Error fetching user data:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+router.put("/prescription/:id_record", async (req, res) => {
+  const data = req.body;
+
+  if (
+    !data.id_prescription_detail ||
+    !data.medicine_name ||
+    !data.dosage ||
+    !data.frequency ||
+    !data.duration ||
+    !data.doctor_instruction ||
+    !data.quantity_prescribe
+  ) {
+    return res.status(400).json({ message: "Data belum diisi lengkap" });
+  }
+
+  try {
+    const updated = await prescriptionController.updatePrescription(
+      data
+    );
+
+    console.log(updated);
+    return res.status(200).json({ message: "Berhasil", data: updated });
+
+  } catch (err) {
+    console.error("Error in route:", err);
+    return res.status(500).json({ error: "Failed to update prescription" });
+  }
+});
+
 
 module.exports = router;

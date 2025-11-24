@@ -116,9 +116,12 @@ async function treatment_patient(id_record, data) {
     }
 }
 
-async function getAllRecordTreatment() {
+async function getAllRecordTreatment(id) {
    try{
-        const treatments = await RecordTreatment.findAll();
+        const treatments = await RecordTreatment.findAll({
+            where: {id_record: id},
+            include: [Treatment]
+        });
         return treatments;
     }
     catch(err){
