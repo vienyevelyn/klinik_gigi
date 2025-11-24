@@ -11,7 +11,7 @@ const MedicalRecord = require('./MedicalRecordModel');
 const Treatment = require('./TreatmentModel');
 const RecordTreatment = require('./RecordTreatmentModel');
 
-const PrescriptionDetail = require("./PrescriptionDetailModel");
+
 
 Appointment.belongsTo(DoctorSchedule, {
   foreignKey: "id_doctor_schedule",

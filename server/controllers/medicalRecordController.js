@@ -1,7 +1,9 @@
 const MedicalRecord = require('../models/MedicalRecordModel');
 const Patient = require('../models/PatientModel');
 const User = require('../models/userModel');
+const Doctor = require('../models/DoctorModel');
 const UserDetail = require('../models/UserDetailModel');
+const Appointment = require('../models/AppointmentModel');
 
 async function getAllIncompleteRecord(id){
     try{
@@ -133,4 +135,56 @@ async function editRecord(id, data) {
     
 }
 
-module.exports = { getAllIncompleteRecord, editRecord, getAllCompleteRecord };
+async function getPatientRecord(id) {
+    try{
+        const record = await MedicalRecord.findAll({
+            where: { status: "complete", id_patient: id },
+            include: [
+                {
+                    model: Doctor,
+                    include: [
+                        {
+                            model: User,
+                            include: [UserDetail]
+                        }
+                    ]
+                },
+                {
+                    model: Appointment
+                }
+            ]
+        });
+
+        if (!record) return null;
+
+        return Promise.all(
+            record.map(async (data) => {
+
+                const user = await User.findOne({
+                    where: { id_doctor: data.id_doctor },
+                    include: [UserDetail]
+                });
+                console.log(user.user_detail?.last_name)
+                return {
+                    id_record: data.id_record,
+                    appointment_date: data.appointment?.appointment_date || "",
+                    appointment_time: data.appointment?.appointment_time || "",
+
+                    first_name: user.user_detail?.first_name,
+                    last_name: user.user_detail?.last_name,
+
+                    symptom: data.symptom || "",
+                    diagnosis: data.diagnosis || "",
+                    doctor_note: data.doctor_note || "",
+                    status: data.status || "incomplete",
+                };
+            })
+        );
+
+    } catch (err) {
+        throw err;
+    }
+}
+
+
+module.exports = { getAllIncompleteRecord, editRecord, getAllCompleteRecord, getPatientRecord };

@@ -128,4 +128,18 @@ async function getAllRecordTreatment(id) {
         throw err;
     } 
 }
-module.exports = {getAllTreatment, getAllRecordTreatment, createTreatment, updateTreatment, treatment_patient};
+
+async function getAllPatientRecordTreatment(id) {
+   try{
+        const treatments = await RecordTreatment.findAll({
+            where: {id_record: id},
+            include: [Treatment]
+        });
+        return treatments;
+    }
+    catch(err){
+        throw err;
+    } 
+}
+
+module.exports = {getAllTreatment, getAllRecordTreatment, createTreatment, updateTreatment, treatment_patient, getAllPatientRecordTreatment};

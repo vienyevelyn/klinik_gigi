@@ -21,6 +21,7 @@ import DoctorIncompleteRecords from './user_doctor/DoctorRecord';
 import DoctorPrescriptionPage from './user_doctor/DoctorPrescription';
 import DoctorTreatmentPage from './user_doctor/DoctorTreatment';
 import AdminTreatmentPage from './user_admin/AdminTreatment';
+import MedicalRecordsPatient from './user_patient/PatientMedicalRecord';
 
 axios.defaults.withCredentials = true;
 
@@ -116,6 +117,14 @@ function App() {
         element={
           <ProtectedRoute role="patient">
             <PatientAppointment />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/patient/record"
+        element={
+          <ProtectedRoute role="patient">
+            <MedicalRecordsPatient />
           </ProtectedRoute>
         }
       />

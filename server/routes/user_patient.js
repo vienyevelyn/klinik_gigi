@@ -3,6 +3,9 @@ const router = express.Router();
 const patientController = require("../controllers/patientController")
 const appointmentController = require("../controllers/appointmentController")
 const middleware = require("../middleware/verifyUser")
+const medicalRecordController = require("../controllers/medicalRecordController")
+const treatmentController = require("../controllers/treatmentController")
+const prescriptionController = require("../controllers/prescriptionController")
 
 router.use(middleware.verifyUser);  
 router.use(middleware.grantRole("patient"))
@@ -93,6 +96,47 @@ router.put("/profile", async (req, res)=>{
     console.error('Error in route:', err);
     res.status(500).json({ error: "Failed to update patient" });
   }
+})
+
+
+router.get("/record", async(req, res)=>{
+
+  try {
+
+    const id = req.id_patient;
+    console.log("Fetching patient with ID:", id);
+    const complete  = await medicalRecordController.getPatientRecord(id);
+
+    console.log(complete )
+    res.status(200).json(
+      complete 
+    );
+
+  } catch (err) {
+    console.error('Error fetching doctor data:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+  
+})
+
+router.get("/record/:id", async(req, res)=>{
+
+  try {
+
+    const { id } = req.params;   
+    const complete  = await treatmentController.getAllPatientRecordTreatment(id);
+    const prescription  = await prescriptionController.getRecordPrescription(id);
+
+    console.log(prescription )
+    res.status(200).json(
+      {complete, prescription} 
+    );
+
+  } catch (err) {
+    console.error('Error fetching doctor data:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+  
 })
 
 module.exports = router;

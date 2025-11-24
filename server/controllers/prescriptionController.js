@@ -1,6 +1,6 @@
 
 const PrescriptionDetail = require('../models/PrescriptionDetailModel');
-
+const MedicalRecord = require("../models/MedicalRecordModel");
 
 async function getAllPrescription(id) {
     try{
@@ -86,4 +86,18 @@ async function updatePrescription( data) {
         throw err;
     }
 }
-module.exports = {getAllPrescription, createPrescription, updatePrescription}
+
+async function getRecordPrescription(id) {
+    try{
+        const psc = await PrescriptionDetail.findAll({
+            where: { id_record: id }   
+        });
+        return psc;
+    }
+    catch(err){
+        throw err;
+    }
+    
+}
+
+module.exports = {getAllPrescription, createPrescription, updatePrescription, getRecordPrescription}
