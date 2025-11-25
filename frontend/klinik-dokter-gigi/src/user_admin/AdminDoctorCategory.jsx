@@ -31,26 +31,30 @@ export default function AdminDoctorCategory() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       if (editMode) {
+        // UPDATE
         await axios.put(
           `http://localhost:3000/admin/doctorcategory/${selectedId}`,
           formData
         );
-        setEditMode(false);
-        setSelectedId(null);
-      alert("Category updated successfully!");
-
+        alert("Category updated successfully!");
       } else {
+        // CREATE
         await axios.post("http://localhost:3000/admin/doctorcategory", formData);
-      alert("Category added successfully!");
-        
+        alert("Category added successfully!");
       }
+
+      // Reset form
       setFormData({ id_doctor_category: "", name: "", description: "" });
+      setEditMode(false);
+      setSelectedId(null);
+
       fetchCategories();
     } catch (error) {
       console.error("Error saving doctor category:", error);
-      alert("Category failed successfully!");
+      alert("Failed to save category!");
     }
   };
 
@@ -65,13 +69,19 @@ export default function AdminDoctorCategory() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this category?")) return;
+
     try {
-      await axios.delete(`http://localhost:3000/admin/doctorcategory/${id}`);
+      // Sesuai backend → pakai PUT, bukan DELETE
+      await axios.put(
+        `http://localhost:3000/admin/doctorcategory/${id}/delete`
+      );
+
       fetchCategories();
+      alert("Category deleted successfully!");
     } catch (error) {
       console.error("Error deleting doctor category:", error);
+      alert("Failed to delete category!");
     }
   };
 
@@ -81,7 +91,6 @@ export default function AdminDoctorCategory() {
         <div className="card-body">
           <h2 className="text-center mb-4">Doctor Category Management</h2>
 
-          {/* Form Section */}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">ID</label>
@@ -91,11 +100,12 @@ export default function AdminDoctorCategory() {
                 value={formData.id_doctor_category}
                 onChange={handleChange}
                 className="form-control"
-                placeholder=""
+                placeholder="(Auto or manual)"
                 required
-                 disabled
+                disabled={editMode} // hanya disabled saat edit
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Name</label>
               <input
@@ -108,6 +118,7 @@ export default function AdminDoctorCategory() {
                 required
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Description</label>
               <textarea
@@ -122,9 +133,7 @@ export default function AdminDoctorCategory() {
 
             <button
               type="submit"
-              className={`btn w-100 ${
-                editMode ? "btn-primary" : "btn-success"
-              }`}
+              className={`btn w-100 ${editMode ? "btn-primary" : "btn-success"}`}
             >
               {editMode ? "Update Category" : "Add Category"}
             </button>
@@ -132,7 +141,6 @@ export default function AdminDoctorCategory() {
         </div>
       </div>
 
-      {/* Table Section */}
       <div className="card shadow mt-5">
         <div className="card-body">
           <h4 className="mb-3">Category List</h4>
@@ -163,7 +171,9 @@ export default function AdminDoctorCategory() {
                         </button>
                         <button
                           className="btn btn-sm btn-danger"
-                          onClick={() => handleDelete(cat.id_doctor_category)}
+                          onClick={() =>
+                            handleDelete(cat.id_doctor_category)
+                          }
                         >
                           Delete
                         </button>

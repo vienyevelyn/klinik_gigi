@@ -7,6 +7,8 @@ const UserDetail = require("../models/UserDetailModel");
 const User = require("../models/userModel");
 const Appointment = require("../models/AppointmentModel");
 const MedicalRecord = require("../models/MedicalRecordModel");
+const { Op } = require("sequelize");
+
 
 
 async function getAllDoctorSchedule(){
@@ -69,6 +71,15 @@ async function bookAppointment(id_patient, data) {
                 id = "AP" + String(newNum).padStart(3, '0');
                 
             }
+
+            const [year, month, day] = data.appointment_date.split("-").map(Number);
+            const [hour, minute] = data.appointment_time.split(":").map(Number);
+            
+            // const appointmentDateTime = new Date(year, month - 1, day + 1).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });;
+
+
+       
+            console.log(data.appointment_date)
             
                 const apt = await Appointment.create({
                 id_appointment: id,

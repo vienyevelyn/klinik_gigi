@@ -5,8 +5,8 @@ import axios from "axios";
 export default function DoctorTreatmentPage() {
   const { id_record } = useParams();
 
-  const [treatmentOptions, setTreatmentOptions] = useState([]); 
-  const [recordTreatments, setRecordTreatments] = useState([]); 
+  const [treatmentOptions, setTreatmentOptions] = useState([]);
+  const [recordTreatments, setRecordTreatments] = useState([]);
   const [selectedTreatment, setSelectedTreatment] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -69,87 +69,96 @@ export default function DoctorTreatmentPage() {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="container p-5">
-      <h2 className="text-xl font-bold mb-4">
-        Treatments for Record #{id_record}
-      </h2>
+    <div className="container py-5">
 
-      <hr className="my-4" />
+      {/* HEADER */}
+      <div className="mb-4">
+        <h2 className="fw-bold">Treatments for Record #{id_record}</h2>
+      </div>
 
-      {/* SELECT TREATMENT TABLE */}
-      <h4 className="mb-3">Select Treatment</h4>
+      <hr />
 
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Select</th>
-            <th>Treatment Name</th>
-            <th>Cost</th>
-          </tr>
-        </thead>
+      {/* SELECT TREATMENT */}
+      <div className="mb-4">
+        <h4 className="mb-3">Select Treatment</h4>
 
-        <tbody>
-          {treatmentOptions.map((t) => (
-            <tr key={t.id_treatment}>
-              <td>
-                <input
-                  type="radio"
-                  name="treatmentSelect"
-                  value={t.id_treatment}
-                  checked={selectedTreatment === t.id_treatment}
-                  onChange={() => setSelectedTreatment(t.id_treatment)}
-                />
-              </td>
-              <td>{t.procedure_name}</td>
-              <td>Rp {t.cost}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <div className="table-responsive">
+          <table className="table table-hover table-striped align-middle">
+            <thead className="table-dark">
+              <tr>
+                <th style={{ width: "80px" }}>Select</th>
+                <th>Treatment</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
 
-      <button className="btn btn-success mt-3" onClick={handleSubmit}>
-        Add Treatment
-      </button>
+            <tbody>
+              {treatmentOptions.map((t) => (
+                <tr key={t.id_treatment}>
+                  <td>
+                    <input
+                      type="radio"
+                      name="treatmentSelect"
+                      value={t.id_treatment}
+                      checked={selectedTreatment === t.id_treatment}
+                      onChange={() => setSelectedTreatment(t.id_treatment)}
+                    />
+                  </td>
+                  <td>{t.procedure_name}</td>
+                  <td>Rp {t.cost}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <hr className="my-4" />
+        <button className="btn btn-success mt-3" onClick={handleSubmit}>
+          Add Treatment
+        </button>
+      </div>
 
-      {/* EXISTING TREATMENTS TABLE */}
-      <h4 className="mb-3">Existing Treatments for This Record</h4>
+      <hr />
 
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Treatment Name</th>
-            <th>Cost</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+      {/* EXISTING TREATMENTS */}
+      <h4 className="mb-3">Existing Treatments</h4>
 
-        <tbody>
-          {recordTreatments.length === 0 ? (
+      <div className="table-responsive">
+        <table className="table table-bordered table-striped align-middle">
+          <thead className="table-dark">
             <tr>
-              <td colSpan="3" className="text-center">
-                No treatments added yet.
-              </td>
+              <th>Treatment</th>
+              <th>Cost</th>
+              <th style={{ width: "120px" }}>Action</th>
             </tr>
-          ) : (
-            recordTreatments.map((rt) => (
-              <tr key={rt.id_record_treatment}>
-                <td>{rt.treatment?.procedure_name}</td>
-                <td>Rp {rt.treatment?.cost}</td>
-                <td>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleDelete(rt.id_record_treatment)}
-                  >
-                    Delete
-                  </button>
+          </thead>
+
+          <tbody>
+            {recordTreatments.length === 0 ? (
+              <tr>
+                <td colSpan="3" className="text-center py-3">
+                  No treatments added yet.
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              recordTreatments.map((rt) => (
+                <tr key={rt.id_record_treatment}>
+                  <td>{rt.treatment?.procedure_name}</td>
+                  <td>Rp {rt.treatment?.cost}</td>
+                  <td>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleDelete(rt.id_record_treatment)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 }

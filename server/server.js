@@ -148,6 +148,7 @@ app.post("/register", async (req, res)=>{
     email,
     phone,
     password,
+    confirm_password,
     nik,
     first_name,
     last_name,
@@ -155,26 +156,43 @@ app.post("/register", async (req, res)=>{
     date_of_birth,
     gender } = req.body;
 
-   if (!username || !email || !phone || !password || !nik || !first_name || !date_of_birth || !city_of_birth  || !gender) {
+   if (!username || !email || !phone || !password || !nik || !first_name || !date_of_birth || !city_of_birth  || !gender || !confirm_password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
+  if(password != confirm_password){
+    return res.status(400).json({ message: "Password tidak ada sama" });
+  }
   try{
     
-    const newUser = await userController.createUserPatient({ username, email, phone, password });
+    const newUser = await userController.createUserandDetail({ 
+      username,
+      email,
+      phone,
+      password,
+      NIK: nik,
+      first_name,
+      last_name,
+      city_of_birth,
+      date_of_birth,
+      gender,
+     });
 
-    const newUserDetail = await userController.createUserDetail({id_user: newUser.id_user, NIK: nik, first_name, last_name, city_of_birth, date_of_birth, gender});
-    return res.status(201).json({ Status: "Success", message: "User registered successfully", user: newUser, userDetail: newUserDetail });
+    if (newUser.error) {
+      return res.status(400).json({ Status: "Fail", message: newUser.error });
+    }
+
+
+    
+    return res.status(201).json({ Status: "Success", message: "User registered successfully", user: newUser.user, patient: newUser.patient,  userDetail: newUser.userDetail });
 
 
   }
   catch(err){
     console.error(err);
-    return res.status(500).json({ Status: "Fail", message: "Server error", error: err.message });
+    return res.status(500).json({ Status: "Fail", message: err.message, error: err.message });
   }
-
   
-
   
 });
 

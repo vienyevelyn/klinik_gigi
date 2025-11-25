@@ -3,7 +3,9 @@ const RecordTreatment = require('../models/RecordTreatmentModel');
 
 async function getAllTreatment() {
    try{
-        const treatments = await Treatment.findAll();
+        const treatments = await Treatment.findAll({
+            where: {deleted_at: null}
+        });
         return treatments;
     }
     catch(err){
@@ -142,4 +144,40 @@ async function getAllPatientRecordTreatment(id) {
     } 
 }
 
-module.exports = {getAllTreatment, getAllRecordTreatment, createTreatment, updateTreatment, treatment_patient, getAllPatientRecordTreatment};
+async function deleteTreatment(id) {
+    try{
+        
+        
+        const updated = await Treatment.update({
+            deleted_at: Date.now() 
+        },
+        {
+            where: {
+                id_treatment: id,
+            }
+        }
+    );
+
+        return updated;
+    }
+    catch(err){
+
+    }
+}
+
+
+async function deleteDoctorTreatment(idPK) {
+    try{
+        await RecordTreatment.destroy({
+            where: {
+                id_record_treatment: idPK
+            }
+        });
+
+        return true
+    }
+    catch(err){
+        throw err;
+    }
+}
+module.exports = {getAllTreatment, getAllRecordTreatment, createTreatment, updateTreatment, treatment_patient, getAllPatientRecordTreatment, deleteTreatment, deleteDoctorTreatment};

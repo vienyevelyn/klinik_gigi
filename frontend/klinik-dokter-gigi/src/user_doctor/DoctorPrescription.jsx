@@ -7,7 +7,6 @@ export default function PrescriptionPage() {
   const { id_record } = useParams();
 
   const [details, setDetails] = useState([]);
-
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
 
@@ -88,12 +87,11 @@ export default function PrescriptionPage() {
         ...editData,
       };
 
-      const res = await axios.put(
+      await axios.put(
         `http://localhost:3000/doctor/prescription/${id_record}`,
         payload
       );
 
-      // Update list
       const updatedList = details.map((item) =>
         item.id_prescription_detail === editId ? editData : item
       );
@@ -105,6 +103,24 @@ export default function PrescriptionPage() {
     } catch (err) {
       console.error("Update failed:", err);
       alert("Failed to update prescription.");
+    }
+  };
+
+  // DELETE prescription detail
+  const deleteDetail = async (detailId) => {
+    if (!window.confirm("Delete this prescription detail?")) return;
+
+    try {
+      await axios.delete(
+        `http://localhost:3000/doctor/prescription/${id_record}/${detailId}`
+      );
+
+      setDetails(details.filter((d) => d.id_prescription_detail !== detailId));
+
+      alert("Prescription detail deleted");
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete prescription.");
     }
   };
 
@@ -216,7 +232,6 @@ export default function PrescriptionPage() {
           <div className="col-md-6" key={detail.id_prescription_detail}>
             <div className="card shadow-sm border-0 h-100">
               <div className="card-body bg-light">
-                {/* EDIT MODE */}
                 {editId === detail.id_prescription_detail ? (
                   <>
                     <h5 className="text-primary fw-bold mb-3">
@@ -305,7 +320,6 @@ export default function PrescriptionPage() {
                   </>
                 ) : (
                   <>
-                    {/* NORMAL CARD */}
                     <h5 className="text-primary fw-bold">
                       {detail.medicine_name}
                     </h5>
@@ -325,6 +339,15 @@ export default function PrescriptionPage() {
                       onClick={() => startEdit(detail)}
                     >
                       Edit
+                    </button>
+
+                    <button
+                      className="btn btn-danger w-100 mt-2 fw-semibold"
+                      onClick={() =>
+                        deleteDetail(detail.id_prescription_detail)
+                      }
+                    >
+                      Delete
                     </button>
                   </>
                 )}

@@ -23,10 +23,7 @@ const Doctor = sequelize.define('doctors', {
         type: DataTypes.STRING(255),
         allowNull: false,
     },
-    CV: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-    },
+
 
     created_at: {
         type: DataTypes.DATE,

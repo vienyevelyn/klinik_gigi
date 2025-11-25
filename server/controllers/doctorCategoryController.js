@@ -3,7 +3,9 @@ const Category = require("../models/DoctorCategoryModel");
 
 async function getAllCategory(){
     try{
-        const categories = await Category.findAll();
+        const categories = await Category.findAll({
+            where :  {deleted_at : null}
+        });
         return categories;
     }
     catch(err){
@@ -82,4 +84,23 @@ async function updateCategory(id, data) {
     }
 }
 
-module.exports = {getAllCategory, createCategory, updateCategory}
+async function deleteCategory(id) {
+    try{
+        const updated = await Category.update({
+            deleted_at: Date.now() 
+        },
+        {
+            where: {
+                id_doctor_category: id
+            }
+        }
+    );
+
+        return updated;
+
+    }
+    catch(err){
+        throw err;
+    }
+}
+module.exports = {getAllCategory, createCategory, updateCategory, deleteCategory}

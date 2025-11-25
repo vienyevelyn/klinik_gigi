@@ -63,7 +63,7 @@ export default function AppointmentPage() {
       }
 
       setDateOptions(dates);
-      setAppointmentDate(dates[0].toISOString().split("T")[0]);
+      setAppointmentDate(null);
     };
 
     generateDates();
@@ -91,7 +91,7 @@ export default function AppointmentPage() {
       navigate("/patient/appointmentlist");
     } catch (err) {
       console.error(err);
-      alert("Failed to book appointment.");
+      alert(err.response?.data?.message ||"Failed to book appointment.");
     }
   };
 
@@ -114,17 +114,25 @@ export default function AppointmentPage() {
           <label className="form-label fw-bold">Select Appointment Date</label>
           <div className="d-flex gap-2 flex-wrap">
             {dateOptions.map((date) => {
-              const isoDate = date.toISOString().split("T")[0];
-              return (
-                <button
-                  key={isoDate}
-                  className={`btn ${appointmentDate === isoDate ? "btn-primary" : "btn-outline-primary"}`}
-                  onClick={() => setAppointmentDate(isoDate)}
-                >
-                  {formatDate(date)}
-                </button>
-              );
-            })}
+  const isoDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+  // GET TODAY'S DATE LOCAL TIME (Asia/Jakarta)
+  const today = new Date();
+  const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  // SKIP TODAY
+  if (isoDate === todayIso) return null;
+
+  return (
+    <button
+      key={isoDate}
+      className={`btn ${appointmentDate === isoDate ? "btn-primary" : "btn-outline-primary"}`}
+      onClick={() => setAppointmentDate(isoDate)}
+    >
+      {formatDate(date)}
+    </button>
+  );
+})}
           </div>
 
           <label className="form-label fw-bold mt-3">Select Appointment Time</label>

@@ -74,10 +74,15 @@ export default function AdminWorkSchedule() {
     setEditMode(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (item) => {
+    if (item.status === "Taken") {
+      alert("Cannot delete this schedule because it is already taken.");
+      return;
+    }
     if (!window.confirm("Are you sure you want to delete this schedule?")) return;
     try {
-      await axios.delete(`http://localhost:3000/admin/workschedule/${id}`);
+      
+      await axios.put(`http://localhost:3000/admin/workschedule/${item.id_work_schedule}/delete`);
       fetchSchedules();
     } catch (error) {
       console.error("Error deleting schedule:", error);
@@ -231,7 +236,7 @@ export default function AdminWorkSchedule() {
                         <button
                           className="btn btn-sm btn-danger"
                           onClick={() =>
-                            handleDelete(item.id_work_schedule)
+                            handleDelete(item)
                           }
                         >
                           Delete

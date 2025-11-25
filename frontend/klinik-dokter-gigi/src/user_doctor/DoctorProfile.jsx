@@ -101,7 +101,6 @@ export default function DoctorProfile() {
         <InputField label="Medical License" name="medical_license" value={tempData.medical_license} editable={editSection === "doctor"} onChange={handleChange} />
         <InputField label="Certificate Degree" name="certificate_degree" value={tempData.certificate_degree} editable={editSection === "doctor"} onChange={handleChange} />
         <InputField label="Specialization Certificate" name="specialization_certificate" value={tempData.specialization_certificate} editable={editSection === "doctor"} onChange={handleChange} />
-        <InputField label="CV" name="CV" value={tempData.CV} editable={editSection === "doctor"} onChange={handleChange} />
       </Section>
     </div>
   );

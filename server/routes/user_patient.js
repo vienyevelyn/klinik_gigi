@@ -51,7 +51,7 @@ router.post("/appointment", async (req, res)=>{
   }
   catch(err){
     console.error('Error in route:', err);
-      return res.status(500).json({ error: "Failed to update admin" });
+      return res.status(500).json({ message: err.message, error: "Failed to update admin" });
   }
   
 })

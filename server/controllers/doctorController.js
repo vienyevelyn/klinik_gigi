@@ -97,7 +97,6 @@ async function editDoctor(id, data) {
         medical_license: data.medical_license,
         certificate_degree: data.certificate_degree,
         specialization_certificate: data.specialization_certificate,
-        CV: data.CV
       },
       {
         where: { id_doctor: data_user.id_doctor  },

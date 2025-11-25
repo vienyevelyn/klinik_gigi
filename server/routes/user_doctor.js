@@ -195,6 +195,19 @@ router.post("/treatment/:id_record", async (req, res)=>{
   }
 });
 
+router.delete("/treatment/:id_record", async (req, res)=>{
+  try{
+    const { id_record } = req.params;
+    const data = await treatmentController.deleteDoctorTreatment(id_record);
+    console.log(data)
+    return res.status(200).json(data);
+  }
+  catch(err){
+    console.error('Error fetching user data:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
 router.post("/prescription/:id_record", async (req, res)=>{
   try{
     const { id_record } = req.params;
@@ -256,5 +269,17 @@ router.put("/prescription/:id_record", async (req, res) => {
   }
 });
 
+router.delete("/prescription/:id_record/:id_detail", async (req, res)=>{
+  try{
+    const { id_record, id_detail } = req.params;
+    const data = await prescriptionController.deletePrescription(id_detail);
+    console.log(data)
+    return res.status(200).json(data);
+  }
+  catch(err){
+    console.error('Error fetching user data:', err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
 module.exports = router;

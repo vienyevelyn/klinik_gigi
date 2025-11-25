@@ -65,6 +65,25 @@ router.put("/doctorcategory/:id", async (req, res)=>{
    }  
 )
 
+router.put("/doctorcategory/:id/delete", async (req, res)=>{
+  const { id } = req.params;
+  const data = req.body;
+
+   try {
+      
+      const updated = await doctorCategoryController.deleteCategory(id)
+
+      console.log(updated);
+      return res.status(201).json({message:"Berhasil", data: updated});
+
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
+   }  
+)
+
 router.get("/workschedule", async (req, res)=>{
   try{
     const data = await workScheduleController.getAllWorkSchedule();
@@ -103,6 +122,24 @@ router.put("/workschedule/:id", async (req, res)=>{
         return res.status(400).json({message: "Data belum diisi lengkap"})
       }
       const updated = await workScheduleController.updateWorkSchedule(id, data)
+
+      console.log(updated);
+      return res.status(201).json({message:"Berhasil", data: updated});
+
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
+   }  
+)
+
+router.put("/workschedule/:id/delete", async (req, res)=>{
+  const { id } = req.params;
+
+   try {
+      
+      const updated = await workScheduleController.deleteSchedule(id)
 
       console.log(updated);
       return res.status(201).json({message:"Berhasil", data: updated});
@@ -237,6 +274,24 @@ router.put("/treatments/:id", async (req, res)=>{
 
       console.log(updated);
       return res.status(201).json({message:"Berhasil", data: updated});
+
+    }
+    catch(err){
+      console.error('Error in route:', err);
+      return res.status(500).json({ error: "Failed to update admin" });
+    }
+   }  
+)
+
+router.put("/treatments/:id/delete", async (req, res)=>{
+  const { id } = req.params;
+
+   try {
+      
+      const updated = await treatmentController.deleteTreatment(id)
+
+      console.log(updated);
+      return res.status(200).json({message:"Berhasil", data: updated});
 
     }
     catch(err){

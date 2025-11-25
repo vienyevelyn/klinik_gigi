@@ -108,7 +108,7 @@ export default function AdminTreatmentPage() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this treatment?")) {
       try {
-        await axios.delete(`http://localhost:3000/admin/treatments/${id}`, {
+        await axios.put(`http://localhost:3000/admin/treatments/${id}/delete`, {
           withCredentials: true,
         });
 

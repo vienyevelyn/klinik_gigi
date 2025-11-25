@@ -100,4 +100,18 @@ async function getRecordPrescription(id) {
     
 }
 
-module.exports = {getAllPrescription, createPrescription, updatePrescription, getRecordPrescription}
+async function deletePrescription(idPK) {
+    try{
+        await PrescriptionDetail.destroy({
+            where: {
+                id_prescription_detail: idPK
+            }
+        });
+
+        return true
+    }
+    catch(err){
+        throw err;
+    }
+}
+module.exports = {getAllPrescription, createPrescription, updatePrescription, getRecordPrescription, deletePrescription}

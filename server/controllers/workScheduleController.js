@@ -9,7 +9,9 @@ const { Op } = require("sequelize");
 
 async function getAllWorkSchedule(){
     try{
-        const categories = await WorkSchedule.findAll();
+        const categories = await WorkSchedule.findAll({
+            where: {deleted_at : null}
+        });
         return categories;
     }
     catch(err){
@@ -22,7 +24,8 @@ async function availableWorkSchedule(){
     try{
         const categories = await WorkSchedule.findAll({
             where: {
-                status: "Available"
+                status: "Available",
+                deleted_at : null
             }
         });
         return categories;
@@ -217,5 +220,27 @@ async function dropSchedule(id, id_ws) {
     }
 }
 
+async function deleteSchedule(id) {
+    try{
+        
+        
+        const updated = await WorkSchedule.update({
+            deleted_at: Date.now() 
+        },
+        {
+            where: {
+                id_work_schedule: id,
+                status: "Available"
+            }
+        }
+    );
 
-module.exports = {getAllWorkSchedule, createWorkSchedule, updateWorkSchedule, availableWorkSchedule, getDoctorSchedule, bookSchedule, dropSchedule}
+        return updated;
+    }
+    catch(err){
+
+    }
+}
+
+
+module.exports = {getAllWorkSchedule, deleteSchedule, createWorkSchedule, updateWorkSchedule, availableWorkSchedule, getDoctorSchedule, bookSchedule, dropSchedule}
