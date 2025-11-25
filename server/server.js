@@ -156,7 +156,7 @@ app.post("/register", async (req, res)=>{
     date_of_birth,
     gender } = req.body;
 
-   if (!username || !email || !phone || !password || !nik || !first_name || !date_of_birth || !city_of_birth  || !gender) {
+   if (!username || !email || !phone || !password || !nik || !first_name ||!last_name || !date_of_birth || !city_of_birth  || !gender) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -174,9 +174,6 @@ app.post("/register", async (req, res)=>{
     return res.status(500).json({ Status: "Fail", message: "Server error", error: err.message });
   }
 
-  
-
-  
 });
 
 app.get("/logout", (req, res)=>{

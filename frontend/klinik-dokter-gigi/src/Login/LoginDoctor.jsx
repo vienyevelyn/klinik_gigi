@@ -114,9 +114,9 @@ function LoginPatient() {
               </div>
             </div>
 
-            <div style={{marginBottom: "30px"}}>
+            <div style={{marginBottom: "10px"}}>
               <label htmlFor="username">
-                <h4>Password</h4>
+                <h5>Password</h5>
               </label>
               <div
                 style={{
@@ -129,18 +129,7 @@ function LoginPatient() {
                   backgroundColor: "white",
                 }}>
                 
-                <button
-    type="button"
-    onClick={() => setShowPassword(!showPassword)}
-    style={{
-      border: "none",
-      background: "transparent", 
-      padding: 0,
-      cursor: "pointer"
-    }}
-  >
-    <i className={showPassword ? "bi bi-unlock2" : "bi bi-lock"} style={{ color: "#170C81" }}></i>
-  </button>
+                <i class="bi bi-key" ></i>
 
                 <input
                   type={showPassword ? "text" : "password"}
@@ -158,8 +147,22 @@ function LoginPatient() {
                     fontSize: "16px",
                   }}
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    border: "none",
+                    background: "transparent", 
+                    padding: 0,
+                    cursor: "pointer"
+                  }}
+                >
+
+                  <i className={showPassword ? "bi bi-unlock2" : "bi bi-lock"} style={{ color: "#170C81" }}></i>
+                </button>
               </div>
-            </div>
+              </div>
 
             {/* <p style={{textAlign: "center"}}>Don't have an account? <a href="/register">Register</a></p> */}
 

@@ -1,175 +1,79 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import loginImg from "../assets/loginimg.png";
-import 'bootstrap-icons/font/bootstrap-icons.css';
-
-
-function LoginPatient() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
-
-  //password show
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.post("http://localhost:3000/loginpatient", formData)
-      .then(res => {
-        console.log("Response:", res.data);
-        if(res.data.Status === "Success"){
-          navigate("/"); 
-          alert("Login successful!");
-        } else {
-          alert("Login failed: " + (res.data.message || "Invalid credentials"));
-        }
-      })
-      .catch(err => {
-        console.error("Axios error:", err);
-        alert("Login request failed!");
-      });
-  };
-
-  return (
-    <div className="d-flex bg-primary vh-100 w-100">
-      <div style={{display: "flex", flex: 1}}>
-        {/* left */}
-        <div style={{flex: 5, backgroundColor: "#5463A4", color: "white", padding: "30px"}}>
-          <div style={{display: "flex", 
-                      flexDirection: "column", 
-                      justifyContent: "center", 
-                      alignItems: "flex-end",
-                      fontSize: "40px",
-                      paddingTop: "60px"}}>
-            <div style={{backgroundColor: "#E7EEFE", color: "#5463A4", borderRadius: "60px"}}>
-              Patient Login
-            </div>
-            
-            <a href="/logindoctor" style={{ textDecoration: "none", color: "white" }}>Doctor Login</a>
-            <a href="/loginadmin" style={{ textDecoration: "none", color: "white" }}>Admin Login</a>
-          </div>  
-
-          <div style={{ width: "100%", textAlign: "center", marginTop: "40px" }}>
-            <img src={loginImg} alt="teeth" style={{ maxWidth: "80%", height: "auto", width: "70%"}} />
-          </div>
-        </div>
-        {/* right */}
-        <div style={{flex: 4, 
-                    backgroundColor: "#E7EEFE",
-                    color: "#170C81", 
-                    display: "flex",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    fontSize: "20px"}}>
-          <h1>PATIENT LOGIN</h1>
-          <br />
-          <form onSubmit={handleSubmit} style={{width: "60%"}}>
-            <div style={{marginBottom: "30px"}}>
-              <label htmlFor="username">
-                <h4>Username</h4>
-              </label>
-
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  border: "1px solid #ccc",
-                  borderRadius: "5px",
-                  padding: "0 10px", 
-                  height: "40px",    
-                  backgroundColor: "white",
-                }}
->               
-                <i className="bi bi-person-circle" style={{ color: "#170C81", marginRight: "8px" }}></i>
-
-                <input
-                  type="text"
-                  placeholder="Enter username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    border: "none",       
-                    outline: "none",      
-                    flex: 1,              
-                    height: "100%",       
-                    fontSize: "16px",
-                  }}
-                />
-              </div>
-            </div>
-
-            <div style={{marginBottom: "30px"}}>
-              <label htmlFor="username">
-                <h4>Password</h4>
-              </label>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  border: "1px solid #ccc",
-                  borderRadius: "5px",
-                  padding: "0 10px", 
-                  height: "40px",    
-                  backgroundColor: "white",
-                }}>
-                
-                <button
-    type="button"
-    onClick={() => setShowPassword(!showPassword)}
-    style={{
-      border: "none",
-      background: "transparent", 
-      padding: 0,
-      cursor: "pointer"
-    }}
-  >
-    <i className={showPassword ? "bi bi-unlock2" : "bi bi-lock"} style={{ color: "#170C81" }}></i>
-  </button>
-
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter password"
-                  name="password"
-                  className="form-control rounded-0"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    border: "none",       
-                    outline: "none",      
-                    flex: 1,              
-                    height: "100%",       
-                    fontSize: "16px",
-                  }}
-                />
-              </div>
-            </div>
-
-            <p style={{textAlign: "center"}}>Don't have an account? <a href="/register">Register</a></p>
-
-            <button type="submit" style={{backgroundColor: "#170C81", border: "none"}} className="btn btn-success w-100 rounded-0">
-              Log In
-            </button>
-          </form>
+<div className="container my-5">
+      {/* Profile Header */}
+      <div className="card shadow mb-4 text-center">
+        <div className="card-body">
+          <img
+            src={user.photo}
+            alt="Profile"
+            className="rounded-circle border border-3 border-primary mb-3"
+            style={{ width: "120px", height: "120px", objectFit: "cover" }}
+          />
+          <h3>
+            {user.first_name} {user.last_name}
+          </h3>
+          <p className="text-muted">@{user.username}</p>
         </div>
       </div>
-      
+
+      {/* Personal Info */}
+      <Section
+        title="Personal Information"
+        color="primary"
+        isEditing={editSection === "personal"}
+        onEdit={() => setEditSection("personal")}
+        onSave={handleSave}
+        onCancel={handleCancel}
+      >
+        {renderPersonalInfo(tempData, handleChange, editSection === "personal")}
+      </Section>
+
+      {/* Medical Info */}
+      <Section
+        title="Medical Information"
+        color="success"
+        isEditing={editSection === "medical"}
+        onEdit={() => setEditSection("medical")}
+        onSave={handleSave}
+        onCancel={handleCancel}
+      >
+        {renderMedicalInfo(tempData, handleChange, editSection === "medical")}
+      </Section>
+
+      {/* Emergency Contact */}
+      <Section
+        title="Emergency Contact"
+        color="danger"
+        isEditing={editSection === "emergency"}
+        onEdit={() => setEditSection("emergency")}
+        onSave={handleSave}
+        onCancel={handleCancel}
+      >
+        {renderEmergencyInfo(tempData, handleChange, editSection === "emergency")}
+      </Section>
     </div>
-  )
+  );
 }
 
-export default LoginPatient;
+// ========== REUSABLE SECTION COMPONENT ==========
+function Section({ title, color, isEditing, onEdit, onSave, onCancel, children }) {
+  return (
+    <div className="card shadow mb-4">
+      <div className={`card-header bg-${color} text-white d-flex justify-content-between align-items-center`}>
+        <span className="fw-bold">{title}</span>
+        {!isEditing ? (
+          <button className="btn btn-light btn-sm" onClick={onEdit}>
+            Edit
+          </button>
+        ) : (
+          <div>
+            <button className="btn btn-light btn-sm me-2" onClick={onSave}>
+              Save
+            </button>
+            <button className="btn btn-outline-light btn-sm" onClick={onCancel}>
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="card-body row">{children}</div>
+    </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import profilePic from "../assets/kazu.jpg";
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -9,19 +10,29 @@ export default function PatientProfile() {
   const [tempData, setTempData] = useState({});
 
   useEffect(() => {
+  //   axios
+  //     .get(`http://localhost:3000/patient/${id}`)
+  //     .then((res) => {
+  //       console.log("Response data:", res.data);
+  //       setPatient(res.data);
+  //       setTempData(res.data);
+  //     })
+  //     .catch((err) => console.error("Error fetching patient:", err));
+  // }, [id]);
+
+  // if (!user) {
+  //   return <div className="text-center mt-5">Loading patient data...</div>;
+  // }
+
+    if (!id) return;
+    
     axios
       .get(`http://localhost:3000/patient/${id}`)
-      .then((res) => {
-        console.log("Response data:", res.data);
-        setPatient(res.data);
-        setTempData(res.data);
-      })
-      .catch((err) => console.error("Error fetching patient:", err));
+      .then((res) => setPatient(res.data))
+      .catch((err) => console.error("Error fetching patient", err));
   }, [id]);
 
-  if (!user) {
-    return <div className="text-center mt-5">Loading patient data...</div>;
-  }
+  if (!user) return <p>Loading Patient Data...</p>
 
   // handle form change
   const handleChange = (e) => {
@@ -51,85 +62,39 @@ export default function PatientProfile() {
     setEditSection(null);
   };
 
+  // SIDEBAR
+  const [open, setOpen] = useState(true);
+
   return (
-    <div className="container my-5">
-      {/* Profile Header */}
-      <div className="card shadow mb-4 text-center">
-        <div className="card-body">
-          <img
-            src={user.photo}
-            alt="Profile"
+    <div className="d-flex vh-100 w-100" style={{backgroundColor: "#F2F5FC"}}>
+      {/* SIDEBAR */}
+      <div className={`sidebar ${open ? "" : "closed"}`} style={{backgroundColor: "#5463A4"}}>
+        <a href={`/patient/${id}`}>Profile</a>
+        <a href={`/appointment/${id}`}>Appointments</a>
+        <a href="">Doctors</a>
+      </div>
+
+      {/* TOPBAR */}
+
+      {/* PICTURE THING */}
+      <div>
+        {/* img */}
+        <div>
+          <img 
+            src={profilePic} 
+            alt="profile pic" 
             className="rounded-circle border border-3 border-primary mb-3"
-            style={{ width: "120px", height: "120px", objectFit: "cover" }}
           />
-          <h3>
-            {user.first_name} {user.last_name}
-          </h3>
-          <p className="text-muted">@{user.username}</p>
+
+          <h5>{user.first_name} {user.last_name}</h5>
         </div>
+        
+
       </div>
-
-      {/* Personal Info */}
-      <Section
-        title="Personal Information"
-        color="primary"
-        isEditing={editSection === "personal"}
-        onEdit={() => setEditSection("personal")}
-        onSave={handleSave}
-        onCancel={handleCancel}
-      >
-        {renderPersonalInfo(tempData, handleChange, editSection === "personal")}
-      </Section>
-
-      {/* Medical Info */}
-      <Section
-        title="Medical Information"
-        color="success"
-        isEditing={editSection === "medical"}
-        onEdit={() => setEditSection("medical")}
-        onSave={handleSave}
-        onCancel={handleCancel}
-      >
-        {renderMedicalInfo(tempData, handleChange, editSection === "medical")}
-      </Section>
-
-      {/* Emergency Contact */}
-      <Section
-        title="Emergency Contact"
-        color="danger"
-        isEditing={editSection === "emergency"}
-        onEdit={() => setEditSection("emergency")}
-        onSave={handleSave}
-        onCancel={handleCancel}
-      >
-        {renderEmergencyInfo(tempData, handleChange, editSection === "emergency")}
-      </Section>
-    </div>
-  );
-}
-
-// ========== REUSABLE SECTION COMPONENT ==========
-function Section({ title, color, isEditing, onEdit, onSave, onCancel, children }) {
-  return (
-    <div className="card shadow mb-4">
-      <div className={`card-header bg-${color} text-white d-flex justify-content-between align-items-center`}>
-        <span className="fw-bold">{title}</span>
-        {!isEditing ? (
-          <button className="btn btn-light btn-sm" onClick={onEdit}>
-            Edit
-          </button>
-        ) : (
-          <div>
-            <button className="btn btn-light btn-sm me-2" onClick={onSave}>
-              Save
-            </button>
-            <button className="btn btn-outline-light btn-sm" onClick={onCancel}>
-              Cancel
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="card-body row">{children}</div>
+      
+      {/* PERSONAL INFORMATION */}
+      {/* MEDICAL INFORMATION */}
+      {/* EMERGENCY CONTACT */}
     </div>
   );
 }
