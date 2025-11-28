@@ -7,7 +7,12 @@ const UserDetail = require("../models/UserDetailModel");
 const User = require("../models/userModel");
 const Appointment = require("../models/AppointmentModel");
 const MedicalRecord = require("../models/MedicalRecordModel");
-const { Op } = require("sequelize");
+
+function timeToMinutes(timeStr) {
+    const [h, m, s = 0] = timeStr.split(":").map(Number);
+    return h * 60 + m + s / 60;
+}
+
 
 
 
@@ -72,14 +77,54 @@ async function bookAppointment(id_patient, data) {
                 
             }
 
-            const [year, month, day] = data.appointment_date.split("-").map(Number);
-            const [hour, minute] = data.appointment_time.split(":").map(Number);
-            
-            // const appointmentDateTime = new Date(year, month - 1, day + 1).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });;
-
 
        
-            console.log(data.appointment_date)
+            const validasi = await Appointment.findAll({
+                where: {
+                    appointment_date: data.appointment_date,
+                    status: "scheduled"
+                }
+            })
+
+            const conflict = validasi.some(a=>{
+                
+                console.log("tes")
+                
+                const [year, month, day] = data.appointment_date.split('-').map(Number);
+                const [year2, month2, day2] = a.appointment_date.split('-').map(Number);
+
+                const [hours, minutes] = data.appointment_time.split(':').map(Number);
+                const [hours2, minutes2, second] = a.appointment_time.split(':').map(Number);
+
+                const date1 = new Date(Date.UTC(year, month - 1, day, hours, minutes))
+                const date2 = new Date(Date.UTC(year2, month2 - 1, day2, hours2, minutes2, second))
+
+                const diffMs = (date2 - date1)/ (1000 * 60 * 60);
+                console.log(diffMs)
+
+                if(diffMs > -1.5 && diffMs < 1.5){
+                    return true
+                }
+                
+            })
+
+            if (conflict) {
+                throw new Error("Jeda waktu harus satu setengah jam dari appointment");
+            }
+
+            const waktu = await DoctorSchedule.findOne({
+                where: {id_doctor_schedule : data.id_doctor_schedule},
+                include: [WorkSchedule]
+            })
+            
+            const time1 = timeToMinutes(data.appointment_time);
+            const time2 = timeToMinutes(waktu.work_schedule.start_time);
+            const time3 = timeToMinutes(waktu.work_schedule.end_time);
+
+            if (time1 < time2 || time1 > time3) {
+                throw new Error("Di luar jam kerja. Mohon pilih ulang");
+            }
+            
             
                 const apt = await Appointment.create({
                 id_appointment: id,

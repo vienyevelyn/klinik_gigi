@@ -119,4 +119,9 @@ async function editDoctor(id, data) {
 
 
 }
+
+async function createDoctor(data) {
+  
+}
+
 module.exports = { getUserFullData, editDoctor };
